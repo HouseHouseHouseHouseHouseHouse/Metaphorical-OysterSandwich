@@ -1,0 +1,7 @@
+**/*.o
+**/*.bin
+**/.*.swp
+
+boot/sys
+boot/initrd
+build.iso
