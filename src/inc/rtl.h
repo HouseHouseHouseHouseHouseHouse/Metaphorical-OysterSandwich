@@ -13,6 +13,6 @@
 #define RTL_H
 
 // Initialize
-void rtl_init(void);
+bool rtl_init(void);
 
 #endif

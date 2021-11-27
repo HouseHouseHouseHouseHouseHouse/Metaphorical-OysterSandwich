@@ -1,7 +1,7 @@
 #include "io.h"
 
 // Output
-static inline void outb(uint16_t port, uint8_t x)
+void outb(uint16_t port, uint8_t x)
 {
     asm volatile (
         "outb %0, %1" : :
@@ -9,7 +9,7 @@ static inline void outb(uint16_t port, uint8_t x)
     );
 }
 
-static inline void outw(uint16_t port, uint16_t x)
+void outw(uint16_t port, uint16_t x)
 {
     asm volatile (
         "outw %0, %1" : :
@@ -17,7 +17,7 @@ static inline void outw(uint16_t port, uint16_t x)
     );
 }
 
-static inline void outl(uint16_t port, uint32_t x)
+void outl(uint16_t port, uint32_t x)
 {
     asm volatile (
         "outl %0, %1" : :
@@ -26,7 +26,7 @@ static inline void outl(uint16_t port, uint32_t x)
 }
 
 // Input
-static inline uint8_t inb(uint16_t port)
+uint8_t inb(uint16_t port)
 {
     uint8_t x;
 
@@ -39,7 +39,7 @@ static inline uint8_t inb(uint16_t port)
     return x;
 }
 
-static inline uint16_t inb(uint16_t port)
+uint16_t inw(uint16_t port)
 {
     uint16_t x;
 
@@ -52,7 +52,7 @@ static inline uint16_t inb(uint16_t port)
     return x;
 }
 
-static inline uint32_t inb(uint16_t port)
+uint32_t inl(uint16_t port)
 {
     uint32_t x;
 

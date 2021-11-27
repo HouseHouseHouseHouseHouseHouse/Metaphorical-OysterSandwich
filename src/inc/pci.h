@@ -34,7 +34,7 @@ void pciConfig_write(uint16_t, uint8_t, uint16_t);
 uint32_t pciConfig_vendorDevice(uint16_t);
 
 // Set Bus Mastering
-void pciConfig_busMaster(uint16_t, bool);
+void pciConfig_busMaster(uint16_t);
 
 // Set IO Base Address
 void pciConfig_ioBase(uint16_t, uint16_t);

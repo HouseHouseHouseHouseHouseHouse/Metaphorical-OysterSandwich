@@ -1,4 +1,5 @@
 #include "rtl.h"
+#include "io.h"
 #include "pci.h"
 
 // Initialize
@@ -15,4 +16,6 @@ bool rtl_init(void)
 
     // Power On
     outb(RTL_IOBASE + RTL_CONFIG_1, 0);
+
+    return true;
 }
