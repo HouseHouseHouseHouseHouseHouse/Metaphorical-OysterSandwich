@@ -2,7 +2,7 @@
 #include "io.h"
 
 // Set PCI Configuration Address
-void pciConfig(uint16_t address, uint8_t offset)
+static void pciConfig(uint16_t address, uint8_t offset)
 {
     outl(PCI_CFG_ADDR,
         (uint32_t) address << 8 |
@@ -32,7 +32,7 @@ void pciConfig_write(uint16_t address, uint8_t offset, uint16_t x)
 // Get Vendor/Device ID
 uint32_t pciConfig_vendorDevice(uint16_t address)
 {
-    pciConfig(address, PCI_CONFIG_VENDOR);
+    pciConfig(address, PCI_CFG_VENDOR);
 
     return inl(PCI_CFG_DATA);
 }
@@ -48,24 +48,23 @@ void pciConfig_busMaster(uint16_t address)
     );
 }
 
-// Set IO Base Address
-void pciConfig_ioBase(uint16_t address, uint16_t base)
+// Get IO Base Address
+uint16_t pciConfig_ioBase(uint16_t address)
 {
+    // Store BAR Value
+    static uint32_t bar;
+
     // Check Header Type
     switch (pciConfig_read(address, PCI_CFG_HEADER) & 0xFF) {
-        case 2:
-            // IO BAR 0
-            pciConfig(address, PCI_CFG_H2_IOBAR0);
+        case 0:
+            // Get IO BAR 0
+            pciConfig(address, PCI_CFG_BAR0);
+            bar = inl(PCI_CFG_DATA);
 
-            // Set BAR
-            outl(PCI_CFG_DATA,
-                (uint32_t) base & ~3 |
-                1
-            );
-
-            break;
+            // Return if it's an IO address
+            if ((bar & 3) == 1) return bar & ~3;
 
         default:
-            break;
+            return 0;
     }
 }

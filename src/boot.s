@@ -33,7 +33,7 @@ _start:
     cli
 
 .end:                                   // Loop here when done
-    hlt
+//    hlt
     jmp     .end
 
 // Size of Kernel

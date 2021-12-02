@@ -13,7 +13,7 @@
 #define PCI_CFG_STATUS 0x06
 
 #define PCI_CFG_HEADER 0x0E
-#define PCI_CFG_H2_IOBAR0 0x28
+#define PCI_CFG_BAR0 0x10
 #define PCI_CFG_INT 0x3C
 
 #define PCI_CFG_COMMAND_IO 1 << 0
@@ -24,7 +24,7 @@
 #define PCI_H
 
 // Set PCI Configuration Address
-void pciConfig(uint16_t, uint8_t);
+static void pciConfig(uint16_t, uint8_t);
 
 // PCI Configuration Operations
 uint16_t pciConfig_read(uint16_t, uint8_t);
@@ -36,7 +36,7 @@ uint32_t pciConfig_vendorDevice(uint16_t);
 // Set Bus Mastering
 void pciConfig_busMaster(uint16_t);
 
-// Set IO Base Address
-void pciConfig_ioBase(uint16_t, uint16_t);
+// Get IO Base Address
+uint16_t pciConfig_ioBase(uint16_t);
 
 #endif
