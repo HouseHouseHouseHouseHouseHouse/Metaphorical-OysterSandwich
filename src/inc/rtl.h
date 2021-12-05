@@ -8,14 +8,16 @@
 #define RTL_CR 0x37
 #define RTL_CONFIG1 0x52
 
-#define RTL_PCI_VENDOR_DEVICE 0x813910EC
-#define RTL_PCI_ADDR 0x0018
-
 #define RTL_TSD_OWN 1 << 13
+#define RTL_TSD_TOK 1 << 15
 
 #define RTL_CR_TE 1 << 2
 #define RTL_CR_RE 1 << 3
 #define RTL_CR_RST 1 << 4
+
+#define RTL_PCI_VENDOR_DEVICE 0x813910EC
+// #define RTL_PCI_ADDR 3 << 8 | 3 << 3 | 0
+#define RTL_PCI_ADDR 0 << 8 | 3 << 3 | 0
 
 #ifndef RTL_H
 #define RTL_H

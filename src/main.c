@@ -2,7 +2,7 @@
 #include "inc/int.h"
 #include "inc/rtl.h"
 
-// Test Ethernet Frame
+// Test Ethernet Frame - An ARP Request
 char frame[42] = {
     // Destination Address
     0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,

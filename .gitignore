@@ -1,5 +1,6 @@
 **/*.o
 **/*.bin
+**/*.dat
 **/.*.swp
 
 boot/sys

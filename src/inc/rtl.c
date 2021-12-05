@@ -54,6 +54,9 @@ void rtl_transmit(void *frame, uint16_t length)
     // Set Size and Transmit
     outl(ioBase + RTL_TSD0 + tr * 4, (uint32_t) length);
 
+    // Wait for the Transmission
+    while ((inl(ioBase + RTL_TSD0 + tr * 4) & RTL_TSD_TOK) == 0);
+
     // Increment Transmission Register Pair
     tr++;
     tr %= 4;
