@@ -25,7 +25,7 @@
 #define RTL_H
 
 // MAC Address
-uint8_t rtl_macAddr[];
+extern uint8_t rtl_macAddr[6];
 
 // IO Base Address
 static uint16_t ioBase;

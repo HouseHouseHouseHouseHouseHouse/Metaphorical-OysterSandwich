@@ -1,4 +1,4 @@
-#include "vga.c"
+#include "vga.h"
 
 // Position
 static size_t row, col;
@@ -10,7 +10,7 @@ static uint16_t *buffer;
 void vga_init(void)
 {
     // Set Buffer and Position
-    buffer = (uint16_t *) 0xB8000
+    buffer = (uint16_t *) 0xB8000;
     row = 0;
     col = 0;
 
@@ -21,7 +21,10 @@ void vga_init(void)
 // Advance Position
 static void advance(void)
 {
-    if (++col %= VGA_COLS == 0) ++row %= VGA_ROWS;
+    if (++col == VGA_COLS) {
+        col = 0;
+        if (++row == VGA_ROWS) row = 0;
+    }
 }
 
 // Print Character
@@ -60,8 +63,8 @@ void vga_println(char *data)
 static char encodeNibbleHex(char data, bool lower)
 {
     // Choose proper Nibble
-    static char nibble = (data
-        >> (upper ? 0 : 4)
+    char nibble = (data
+        >> (lower ? 0 : 4)
         & 0xF) + '0'
     ;
 

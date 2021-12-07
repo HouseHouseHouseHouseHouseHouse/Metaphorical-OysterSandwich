@@ -1,6 +1,7 @@
 #include "inc/mem.h"
 #include "inc/int.h"
 #include "inc/rtl.h"
+#include "inc/vga.h"
 
 // Test Ethernet Frame - An ARP Request
 char frame[42] = {
@@ -47,13 +48,14 @@ void main(void)
     mem_init();
     int_init();
     rtl_init();
+    vga_init();
 
     // Print Brand String
     vga_println("Metaphorical-OysterSandwich, by Jacob Bates\0");
 
     // Print MAC Address
-    for (uint8_t i : macAddr) {
-        vga_printHex(i);
+    for (size_t i = 0; i < 6; i++) {
+        vga_printHex(rtl_macAddr[i]);
         vga_printChar('-');
     }
 
