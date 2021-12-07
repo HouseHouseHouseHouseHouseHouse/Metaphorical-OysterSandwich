@@ -7,6 +7,9 @@
 
 #define VGA_GREY_BLACK 0x07 << 8
 
+#ifndef VGA_H
+#define VGA_H
+
 // Position
 static size_t row, col;
 
@@ -27,3 +30,5 @@ void vga_println(char *);
 
 // Print Character as Hex
 void vga_printHex(char);
+
+#endif
