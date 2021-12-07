@@ -48,6 +48,15 @@ void main(void)
     int_init();
     rtl_init();
 
+    // Print Brand String
+    vga_println("Metaphorical-OysterSandwich, by Jacob Bates\0");
+
+    // Print MAC Address
+    for (uint8_t i : macAddr) {
+        vga_printHex(i);
+        vga_printChar('-');
+    }
+
     // Send Test Frame
     rtl_transmit(&frame, 42);
 }

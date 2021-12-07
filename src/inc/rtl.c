@@ -2,6 +2,9 @@
 #include "io.h"
 #include "pci.h"
 
+// MAC Address
+uint8_t macAddr[6];
+
 // IO Base Address
 static uint16_t ioBase;
 
@@ -25,6 +28,11 @@ bool rtl_init(void)
 
     // Reset
     rtl_reset();
+
+    // Get MAC Address
+    for (int i = 0; i < 6; i++) {
+        macAddr[i] = inb(ioBase + RTL_ID0 + i);
+    }
 
     // Enable Transmission
     outb(ioBase + RTL_CR, RTL_CR_TE);

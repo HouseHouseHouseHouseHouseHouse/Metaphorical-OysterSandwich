@@ -20,7 +20,7 @@ CCFLAGS += -g
 LOOP0	:= /dev/loop6
 LOOP1	:= /dev/loop7
 
-.PHONY: all sys iso clean
+.PHONY: all sys iso clean test
 
 all: iso clean
 
@@ -41,3 +41,10 @@ clean:
 
 %.o: %.s
 	$(AS) $(ASFLAGS) -c $< -o $@
+
+test:
+	qemu-system-i386 -cdrom build.iso \
+	-netdev user,id=if0 \
+	-device rtl8139,netdev=if0,mac=52:54:00:12:34:56 \
+	-object filter-dump,id=network_filter_object,netdev=if0,file=netdump.dat \
+	-s -S
