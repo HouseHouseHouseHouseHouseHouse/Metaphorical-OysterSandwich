@@ -1,9 +1,19 @@
 #include "rtl.h"
 #include "io.h"
 #include "pci.h"
+#include "vga.h"
+
+// Ethernet Framebuffer
+static struct {
+    macAddr src;
+    macAddr dest;
+    uint16_t etherType;
+    uint8_t data[0x0700 - 14];
+} __attribute__((packed)) framebuffer;
 
 // MAC Address
-uint8_t rtl_macAddr[6];
+macAddr rtl_macAddr;
+const macAddr broadcastAddr = {{0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF}};
 
 // IO Base Address
 static uint16_t ioBase;
@@ -31,7 +41,7 @@ bool rtl_init(void)
 
     // Get MAC Address
     for (int i = 0; i < 6; i++) {
-        rtl_macAddr[i] = inb(ioBase + RTL_ID0 + i);
+        rtl_macAddr.x[i] = inb(ioBase + RTL_ID0 + i);
     }
 
     // Enable Transmission
@@ -54,16 +64,27 @@ static void rtl_reset(void)
 }
 
 // Transmit an Ethernet Frame
-void rtl_transmit(void *frame, uint16_t length)
+void rtl_transmit(char *data, size_t length, enum EtherType etherType, macAddr dest)
 {
+    // Set Source/Destination Addresses and Ether-type
+    framebuffer.src = rtl_macAddr;
+    framebuffer.dest = dest;
+    framebuffer.etherType = etherType;
+
+    // Copy Data
+    for (size_t i = 0; i < length; i++) {
+        framebuffer.data[i] = data[i];
+    }
+
     // Set Transmission Start Address
-    outl(ioBase + RTL_TSAD0 + tr * 4, (uint32_t) frame);
+    outl(ioBase + RTL_TSAD0 + tr * 4, (uint32_t) &framebuffer);
     
     // Set Size and Transmit
-    outl(ioBase + RTL_TSD0 + tr * 4, (uint32_t) length);
+    outl(ioBase + RTL_TSD0 + tr * 4, (uint32_t) length + 14);
 
     // Wait for the Transmission
     while ((inl(ioBase + RTL_TSD0 + tr * 4) & RTL_TSD_TOK) == 0);
+    vga_println("TOK");
 
     // Increment Transmission Register Pair
     tr++;

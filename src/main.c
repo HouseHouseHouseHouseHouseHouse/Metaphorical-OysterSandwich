@@ -4,16 +4,7 @@
 #include "inc/vga.h"
 
 // Test Ethernet Frame - An ARP Request
-char frame[42] = {
-    // Destination Address
-    0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,
-    
-    // Source Address
-    0, 0, 0, 0, 0, 0,
-
-    // Ethernet Protocol Type
-    0x08, 0x06,
-
+char frame[28] = {
     // Hardware Address Type
     0x00, 0x01,
 
@@ -51,14 +42,15 @@ void main(void)
     vga_init();
 
     // Print Brand String
-    vga_println("Metaphorical-OysterSandwich, by Jacob Bates\0");
+    vga_println("Metaphorical-OysterSandwich, by Jacob Bates");
 
     // Print MAC Address
     for (size_t i = 0; i < 6; i++) {
-        vga_printHex(rtl_macAddr[i]);
-        vga_printChar('-');
+        vga_printHex(rtl_macAddr.x[i]);
+        if (i < 5) vga_printChar('-');
     }
+    vga_println("");
 
     // Send Test Frame
-    rtl_transmit(&frame, 42);
+    rtl_transmit(&frame, sizeof(frame), ARP, broadcastAddr);
 }

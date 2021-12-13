@@ -24,8 +24,16 @@
 #ifndef RTL_H
 #define RTL_H
 
-// MAC Address
-extern uint8_t rtl_macAddr[6];
+// MAC Addresses
+typedef struct { uint8_t x[6]; } macAddr;
+
+extern macAddr rtl_macAddr;
+extern const macAddr broadcastAddr;
+
+// Ether-type
+enum EtherType {
+    ARP = 0x08 | 0x06 << 8
+};
 
 // IO Base Address
 static uint16_t ioBase;
@@ -40,6 +48,6 @@ bool rtl_init(void);
 static void rtl_reset(void);
 
 // Transmit an Ethernet Frame
-void rtl_transmit(void *, uint16_t);
+void rtl_transmit(char *, size_t, enum EtherType, macAddr);
 
 #endif
