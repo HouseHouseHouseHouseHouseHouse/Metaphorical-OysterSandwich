@@ -6,12 +6,25 @@
 
 #define RTL_TSD0 0x10
 #define RTL_TSAD0 0x20
+#define RTL_RBSTART 0x30
+
+#define RTL_IMR 0x3C
+#define RTL_ISR 0x3E
+
+#define RTL_RCR 0x44
 
 #define RTL_CR 0x37
 #define RTL_CONFIG1 0x52
 
 #define RTL_TSD_OWN 1 << 13
 #define RTL_TSD_TOK 1 << 15
+
+#define RTL_ISR_ROK 1 << 0
+#define RTL_ISR_SERR 1 < 15
+
+#define RTL_RCR_APM 1 << 1
+#define RTL_RCR_AB 1 << 3
+#define RTL_RCR_WRAP 1 << 7
 
 #define RTL_CR_TE 1 << 2
 #define RTL_CR_RE 1 << 3
@@ -40,5 +53,9 @@ bool rtl_init(void);
 
 // Transmit an Ethernet Frame
 void rtl_transmit(char *, size_t, enum EtherType, macAddr);
+
+// Handle an Interrupt
+extern void rtl_int(void);
+void rtl_intHandler(void);
 
 #endif

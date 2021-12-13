@@ -32,7 +32,7 @@ typedef struct {
 extern IDTRegister idtr;
 
 // Exception Handler
-extern void ex();
+extern void ex(void);
 
 // Initialization
 void int_init(void);

@@ -68,3 +68,11 @@ uint16_t pciConfig_ioBase(uint16_t address)
             return 0;
     }
 }
+
+// Get Interrupt Line
+uint8_t pciConfig_intLine(uint16_t address)
+{
+    pciConfig(address, PCI_CFG_INT);
+
+    return inl(PCI_CFG_DATA);
+}

@@ -36,4 +36,7 @@ void pciConfig_busMaster(uint16_t);
 // Get IO Base Address
 uint16_t pciConfig_ioBase(uint16_t);
 
+// Get Interrupt Line
+uint8_t pciConfig_intLine(uint16_t);
+
 #endif
