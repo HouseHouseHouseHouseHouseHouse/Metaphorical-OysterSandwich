@@ -20,7 +20,7 @@ CCFLAGS += -g
 LOOP0	:= /dev/loop6
 LOOP1	:= /dev/loop7
 
-.PHONY: all sys iso clean test
+.PHONY: all test debug sys iso clean test
 
 all: iso clean
 

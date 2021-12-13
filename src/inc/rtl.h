@@ -18,8 +18,8 @@
 #define RTL_CR_RST 1 << 4
 
 #define RTL_PCI_VENDOR_DEVICE 0x813910EC
-#define RTL_PCI_ADDR 3 << 8 | 3 << 3 | 0
-// #define RTL_PCI_ADDR 0 << 8 | 3 << 3 | 0
+// #define RTL_PCI_ADDR 3 << 8 | 3 << 3 | 0
+#define RTL_PCI_ADDR 0 << 8 | 3 << 3 | 0
 
 #ifndef RTL_H
 #define RTL_H
