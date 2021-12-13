@@ -23,9 +23,6 @@
 #ifndef PCI_H
 #define PCI_H
 
-// Set PCI Configuration Address
-static void pciConfig(uint16_t, uint8_t);
-
 // PCI Configuration Operations
 uint16_t pciConfig_read(uint16_t, uint8_t);
 void pciConfig_write(uint16_t, uint8_t, uint16_t);

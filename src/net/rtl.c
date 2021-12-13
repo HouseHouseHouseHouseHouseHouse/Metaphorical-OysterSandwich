@@ -1,7 +1,8 @@
 #include "rtl.h"
-#include "io.h"
-#include "pci.h"
-#include "vga.h"
+
+#include "../io/io.h"
+#include "../io/pci.h"
+#include "../io/vga.h"
 
 // Ethernet Framebuffer
 static struct {
@@ -20,6 +21,19 @@ static uint16_t ioBase;
 
 // Keep track of the Transmission Register pair
 static uint8_t tr;
+
+// Perform a Software Reset
+static void rtl_reset(void)
+{
+    // Send Command
+    outb(ioBase + RTL_CR, RTL_CR_RST);
+
+    // Poll this bit until it clears
+    while ((inb(ioBase + RTL_CR) & RTL_CR_RST) != 0);
+
+    // Reset Transmission Register pair
+    tr = 0;
+}
 
 // Initialize
 bool rtl_init(void)
@@ -48,19 +62,6 @@ bool rtl_init(void)
     outb(ioBase + RTL_CR, RTL_CR_TE);
 
     return true;
-}
-
-// Perform a Software Reset
-static void rtl_reset(void)
-{
-    // Send Command
-    outb(ioBase + RTL_CR, RTL_CR_RST);
-
-    // Poll this bit until it clears
-    while ((inb(ioBase + RTL_CR) & RTL_CR_RST) != 0);
-
-    // Reset Transmission Register pair
-    tr = 0;
 }
 
 // Transmit an Ethernet Frame

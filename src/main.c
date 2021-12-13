@@ -1,7 +1,7 @@
-#include "inc/mem.h"
-#include "inc/int.h"
-#include "inc/rtl.h"
-#include "inc/vga.h"
+#include "io/vga.h"
+#include "mem/mem.h"
+#include "mem/int.h"
+#include "net/rtl.h"
 
 // Test Ethernet Frame - An ARP Request
 char frame[28] = {
@@ -52,5 +52,5 @@ void main(void)
     vga_println("");
 
     // Send Test Frame
-    rtl_transmit(&frame, sizeof(frame), ARP, broadcastAddr);
+    rtl_transmit((char *) &frame, sizeof(frame), ARP, broadcastAddr);
 }

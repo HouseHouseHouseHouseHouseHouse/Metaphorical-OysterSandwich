@@ -10,12 +10,6 @@
 #ifndef VGA_H
 #define VGA_H
 
-// Position
-static size_t row, col;
-
-// Display Buffer
-static uint16_t *buffer;
-
 // Initialize
 void vga_init(void);
 

@@ -35,17 +35,8 @@ enum EtherType {
     ARP = 0x08 | 0x06 << 8
 };
 
-// IO Base Address
-static uint16_t ioBase;
-
-// Keep track of the Transmission Register pair
-static uint8_t tr;
-
 // Initialize
 bool rtl_init(void);
-
-// Perform a Software Reset
-static void rtl_reset(void);
 
 // Transmit an Ethernet Frame
 void rtl_transmit(char *, size_t, enum EtherType, macAddr);
