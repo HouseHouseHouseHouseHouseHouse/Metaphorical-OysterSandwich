@@ -3,7 +3,7 @@
 #include "../io/io.h"
 #include "../io/pci.h"
 #include "../io/vga.h"
-#include "../mem/int.h"
+#include "../int/int.h"
 
 // Ethernet Framebuffers
 static struct {

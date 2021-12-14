@@ -1,6 +1,6 @@
 #include "io/vga.h"
 #include "mem/mem.h"
-#include "mem/int.h"
+#include "int/int.h"
 #include "net/rtl.h"
 
 // Test Ethernet Frame - An ARP Request
