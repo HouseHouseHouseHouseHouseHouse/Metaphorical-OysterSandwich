@@ -30,7 +30,7 @@ _start:
 
     int     $0x00
 
-    cli
+//    cli
 
 .end:                                   // Loop here when done
 //    hlt

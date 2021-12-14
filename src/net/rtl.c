@@ -52,9 +52,6 @@ bool rtl_init(void)
     // Get IO Base
     ioBase = pciConfig_ioBase(RTL_PCI_ADDR);
 
-    // Set up Interrupts
-    int_encodeIDTEntry(pciConfig_intLine(RTL_PCI_ADDR), (uint32_t) &rtl_int, false);
-
     // Enable Bus Mastering
     pciConfig_busMaster(RTL_PCI_ADDR);
 

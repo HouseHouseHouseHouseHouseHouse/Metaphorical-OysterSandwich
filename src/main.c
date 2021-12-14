@@ -4,18 +4,20 @@
 #include "net/rtl.h"
 
 // Test Ethernet Frame - An ARP Request
-char frame[28] = {
+char frame[52] = {
     // Hardware Address Type
     0x00, 0x01,
 
     // Protocol Address Type
     0x08, 0x00,
+    // 0x86, 0xDD,
 
     // Hardware Address Size
     0x06,
 
     // Protocol Address Size
     0x04,
+    // 0x10,
 
     // Opcode
     0x00, 0x01,
@@ -24,13 +26,15 @@ char frame[28] = {
     0, 0, 0, 0, 0, 0,
 
     // Protocol Address of Sender
-    192, 168, 1, 251,
+    192, 168, 1, 16,
+    // 0xFE, 0x80, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01, 0x23, 0x45, 0x67, 0x89, 0xAB, 0xCD, 0xEF,
 
     // Hardware Address of Target
     0, 0, 0, 0, 0, 0,
 
     // Protocol Address of Target
-    192, 168, 1, 123
+    224, 0, 0, 1
+    // 0xFF, 0x02, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01
 };
 
 void main(void)
