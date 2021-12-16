@@ -52,6 +52,9 @@ bool rtl_init(void)
     // Get IO Base
     ioBase = pciConfig_ioBase(RTL_PCI_ADDR);
 
+    // Set up an IRQ
+    int_setupIRQ(pciConfig_intLine(RTL_PCI_ADDR), (uint32_t) &rtl_int);
+
     // Enable Bus Mastering
     pciConfig_busMaster(RTL_PCI_ADDR);
 

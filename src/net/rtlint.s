@@ -4,8 +4,8 @@
 .global rtl_int
 .type rtl_int, @function
 rtl_int:
-    pushad
+    pushal
     cld
     call rtl_intHandler
-    popad
+    popal
     iret

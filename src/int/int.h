@@ -37,7 +37,7 @@ extern void ex(void);
 // Initialization
 void int_init(void);
 
-// Encode an IDT entry
-void int_encodeIDTEntry(uint8_t, uint32_t, bool);
+// Set up an IRQ
+void int_setupIRQ(uint8_t, uint32_t);
 
 #endif
