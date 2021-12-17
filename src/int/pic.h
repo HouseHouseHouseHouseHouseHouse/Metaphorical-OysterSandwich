@@ -26,7 +26,7 @@
 void pic_init(void);
 
 // End Interrupt
-void pic_endInterrupt(uint8_t);
+void pic_sendEOI(uint8_t);
 
 // Mask IRQ Line
 void pic_maskIRQ(uint8_t, bool);

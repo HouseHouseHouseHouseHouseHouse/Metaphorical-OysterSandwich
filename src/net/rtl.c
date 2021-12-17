@@ -27,6 +27,9 @@ const macAddr broadcastAddr = {{0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF}};
 // IO Base Address
 static uint16_t ioBase;
 
+// Interrupt Line
+static uint8_t intLine;
+
 // Keep track of the Transmission Register pair
 static uint8_t tr;
 
@@ -53,7 +56,8 @@ bool rtl_init(void)
     ioBase = pciConfig_ioBase(RTL_PCI_ADDR);
 
     // Set up an IRQ
-    int_setupIRQ(pciConfig_intLine(RTL_PCI_ADDR), (uint32_t) &rtl_int);
+    intLine = pciConfig_intLine(RTL_PCI_ADDR);
+    int_setupIRQ(intLine, (uint32_t) &rtl_int);
 
     // Enable Bus Mastering
     pciConfig_busMaster(RTL_PCI_ADDR);
@@ -125,4 +129,7 @@ void rtl_intHandler(void)
 
     // System Error
     else if (intSource & RTL_ISR_SERR) rtl_reset();
+
+    // End of ISR
+    int_end(intLine);
 }
