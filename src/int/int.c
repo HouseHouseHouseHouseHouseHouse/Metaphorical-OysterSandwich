@@ -51,10 +51,11 @@ void int_init(void)
 void int_setupIRQ(uint8_t line, uint32_t isr_base)
 {
     // Interrupt Number
+    line &= 0xF;
     uint8_t target =
-        (line & 0xF) < 8 ?
+        line < 8 ?
         PIC0_OFFSET + line :
-        PIC1_OFFSET + line
+        PIC1_OFFSET + line - 8
     ;
 
     // Make IDT Entry

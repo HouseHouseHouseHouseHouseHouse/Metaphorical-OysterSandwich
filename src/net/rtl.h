@@ -20,6 +20,8 @@
 #define RTL_TSD_TOK 1 << 15
 
 #define RTL_ISR_ROK 1 << 0
+#define RTL_ISR_TOK 1 << 2
+#define RTL_ISR_LINKCHG 1 << 5
 #define RTL_ISR_SERR 1 < 15
 
 #define RTL_RCR_APM 1 << 1

@@ -77,7 +77,7 @@ bool rtl_init(void)
     outl(ioBase + RTL_RBSTART, (uint32_t) &recvbuffer);
 
     // Configure Interrupts
-    outw(ioBase + RTL_IMR, RTL_ISR_ROK | RTL_ISR_SERR);
+    outw(ioBase + RTL_IMR, RTL_ISR_ROK | RTL_ISR_TOK | RTL_ISR_SERR);
 
     // Configure Receipt (match/broadcast, don't wrap)
     outl(ioBase + RTL_RCR, RTL_RCR_APM | RTL_RCR_AB | RTL_RCR_WRAP);
@@ -108,8 +108,8 @@ void rtl_transmit(char *data, size_t length, enum EtherType etherType, macAddr d
     outl(ioBase + RTL_TSD0 + tr * 4, (uint32_t) length + 14);
 
     // Wait for the Transmission
-    while ((inl(ioBase + RTL_TSD0 + tr * 4) & RTL_TSD_TOK) == 0);
-    vga_println("TOK");
+    // while ((inl(ioBase + RTL_TSD0 + tr * 4) & RTL_TSD_TOK) == 0);
+    // vga_println("TOK");
 
     // Increment Transmission Register Pair
     tr++;
@@ -122,13 +122,26 @@ void rtl_intHandler(void)
     // Check the Interrupt Source
     uint16_t intSource = inw(ioBase + RTL_ISR);
 
-    // Receive Interrupt
+    // Receive-OK
     if (intSource & RTL_ISR_ROK) {
         vga_println("ROK");
     }
 
+    // Transmit-OK
+    if (intSource & RTL_ISR_TOK) {
+        vga_println("TOK");
+    }
+
+    // Link Change
+    if (intSource & RTL_ISR_LINKCHG) {
+        vga_println("Link Change");
+    }
+
     // System Error
-    else if (intSource & RTL_ISR_SERR) rtl_reset();
+    if (intSource & RTL_ISR_SERR) rtl_reset();
+
+    // Write bits back to ISR
+    outw(ioBase + RTL_ISR, intSource);
 
     // End of ISR
     int_end(intLine);

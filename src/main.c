@@ -57,4 +57,7 @@ void main(void)
 
     // Send Test Frame
     rtl_transmit((char *) &frame, sizeof(frame), ARP, broadcastAddr);
+
+    // Hold here
+    while (true);
 }
