@@ -77,7 +77,7 @@ bool rtl_init(void)
     outl(ioBase + RTL_RBSTART, (uint32_t) &recvbuffer);
 
     // Configure Interrupts
-    outw(ioBase + RTL_IMR, RTL_ISR_ROK | RTL_ISR_TOK | RTL_ISR_SERR);
+    outw(ioBase + RTL_IMR, RTL_ISR_ROK | RTL_ISR_TOK | RTL_ISR_LINKCHG | RTL_ISR_SERR);
 
     // Configure Receipt (match/broadcast, don't wrap)
     outl(ioBase + RTL_RCR, RTL_RCR_APM | RTL_RCR_AB | RTL_RCR_WRAP);
@@ -123,25 +123,25 @@ void rtl_intHandler(void)
     uint16_t intSource = inw(ioBase + RTL_ISR);
 
     // Receive-OK
-    if (intSource & RTL_ISR_ROK) {
-        vga_println("ROK");
+    if ((intSource & RTL_ISR_ROK) != 0) {
+        vga_println("ISR_ROK");
+        outw(ioBase + RTL_ISR, RTL_ISR_ROK);
     }
 
     // Transmit-OK
-    if (intSource & RTL_ISR_TOK) {
-        vga_println("TOK");
+    else if ((intSource & RTL_ISR_TOK) != 0) {
+        vga_println("ISR_TOK");
+        outw(ioBase + RTL_ISR, RTL_ISR_TOK);
     }
 
     // Link Change
-    if (intSource & RTL_ISR_LINKCHG) {
+    else if ((intSource & RTL_ISR_LINKCHG) != 0) {
         vga_println("Link Change");
+        outw(ioBase + RTL_ISR, RTL_ISR_LINKCHG);
     }
 
     // System Error
-    if (intSource & RTL_ISR_SERR) rtl_reset();
-
-    // Write bits back to ISR
-    outw(ioBase + RTL_ISR, intSource);
+    else if ((intSource & RTL_ISR_SERR) != 0) rtl_reset();
 
     // End of ISR
     int_end(intLine);

@@ -58,6 +58,10 @@ void main(void)
     // Send Test Frame
     rtl_transmit((char *) &frame, sizeof(frame), ARP, broadcastAddr);
 
+    // Wait and send another
+    for (uint32_t i = 0; i < 1e9; i++);
+    rtl_transmit((char *) &frame, sizeof(frame), ARP, broadcastAddr);
+
     // Hold here
     while (true);
 }

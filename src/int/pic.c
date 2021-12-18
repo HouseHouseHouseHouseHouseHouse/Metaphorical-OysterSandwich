@@ -29,11 +29,11 @@ void pic_init(void)
 // End Interrupt
 void pic_sendEOI(uint8_t line)
 {
-    // Send Command
-    outb(PIC0_CMD, PIC_CMD_END);
+    // Send to Slave if it is responsible
+    if ((line & 0xF) >= 8) outb(PIC1_CMD, PIC_CMD_END);
 
-    // Send to both if the Slave is responsible
-    if ((line & 0xF) < 8) outb(PIC1_CMD, PIC_CMD_END);
+    // Send to Master either way
+    outb(PIC0_CMD, PIC_CMD_END);
 }
 
 // Mask IRQ Line
