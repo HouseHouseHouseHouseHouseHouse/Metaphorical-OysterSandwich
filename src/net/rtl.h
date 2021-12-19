@@ -24,7 +24,9 @@
 #define RTL_ISR_LINKCHG 1 << 5
 #define RTL_ISR_SERR 1 < 15
 
+#define RTL_RCR_AAP 1 << 0
 #define RTL_RCR_APM 1 << 1
+#define RTL_RCR_AM 1 << 2
 #define RTL_RCR_AB 1 << 3
 #define RTL_RCR_WRAP 1 << 7
 
@@ -57,7 +59,7 @@ bool rtl_init(void);
 void rtl_transmit(char *, size_t, enum EtherType, macAddr);
 
 // Handle an Interrupt
-extern void rtl_int(void);
+extern void rtl_isr(void);
 void rtl_intHandler(void);
 
 #endif

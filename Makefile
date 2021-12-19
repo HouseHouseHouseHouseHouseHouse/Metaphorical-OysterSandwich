@@ -11,7 +11,7 @@ HFILES  := $(shell find $(DIR) -type f -name "*.h")
 OBJS    := $(patsubst %.c, %.o, $(CFILES))
 OBJS    += $(patsubst %.s, %.o, $(SFILES))
 
-CCFLAGS := -std=gnu99 -ffreestanding -O2 -Wall -Wextra
+CCFLAGS := -std=gnu99 -ffreestanding -O2 -Wall -Wextra -fanalyzer
 ASFLAGS :=
 
 # For debugging

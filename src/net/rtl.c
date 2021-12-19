@@ -5,7 +5,7 @@
 #include "../io/vga.h"
 #include "../int/int.h"
 
-// Ethernet Framebuffers
+// Ethernet Frame Buffers
 static struct {
     macAddr src;
     macAddr dest;
@@ -13,12 +13,7 @@ static struct {
     uint8_t data[0x0700 - 14];
 } __attribute__((packed)) sendbuffer;
 
-static struct {
-    macAddr src;
-    macAddr dest;
-    uint16_t etherType;
-    uint8_t data[0x2700 + 2];
-} __attribute__((packed)) recvbuffer;
+static uint16_t recvbuffer[0x2010];
 
 // MAC Address
 macAddr rtl_macAddr;
@@ -55,9 +50,9 @@ bool rtl_init(void)
     // Get IO Base
     ioBase = pciConfig_ioBase(RTL_PCI_ADDR);
 
-    // Set up an IRQ
+    // Set up ISR
     intLine = pciConfig_intLine(RTL_PCI_ADDR);
-    int_setupIRQ(intLine, (uint32_t) &rtl_int);
+    int_setupIRQ(intLine, (uint32_t) &rtl_isr);
 
     // Enable Bus Mastering
     pciConfig_busMaster(RTL_PCI_ADDR);
@@ -79,11 +74,11 @@ bool rtl_init(void)
     // Configure Interrupts
     outw(ioBase + RTL_IMR, RTL_ISR_ROK | RTL_ISR_TOK | RTL_ISR_LINKCHG | RTL_ISR_SERR);
 
-    // Configure Receipt (match/broadcast, don't wrap)
-    outl(ioBase + RTL_RCR, RTL_RCR_APM | RTL_RCR_AB | RTL_RCR_WRAP);
-
-    // Enable Transmission & Receipt
+    // Enable Transmitter & Receiver
     outb(ioBase + RTL_CR, RTL_CR_TE | RTL_CR_RE);
+
+    // Configure Receipt (match/broadcast, wrap)
+    outl(ioBase + RTL_RCR, RTL_RCR_APM | RTL_RCR_AB | RTL_RCR_WRAP);
 
     return true;
 }
