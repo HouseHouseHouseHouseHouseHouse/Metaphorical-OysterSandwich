@@ -5,15 +5,15 @@
 #include "../io/vga.h"
 #include "../int/int.h"
 
-// Ethernet Frame Buffers
+// Transmission Buffer
 static struct {
-    macAddr src;
-    macAddr dest;
-    uint16_t etherType;
+    etherHeader header;
     uint8_t data[0x0700 - 14];
 } __attribute__((packed)) sendbuffer;
 
-static uint16_t recvbuffer[0x2010];
+// Receipt Buffer
+static uint16_t recvOffset = 0;
+static uint8_t recvbuffer[0x2010];
 
 // MAC Address
 macAddr rtl_macAddr;
@@ -86,10 +86,10 @@ bool rtl_init(void)
 // Transmit an Ethernet Frame
 void rtl_transmit(char *data, size_t length, enum EtherType etherType, macAddr dest)
 {
-    // Set Source/Destination Addresses and Ether-type
-    sendbuffer.src = rtl_macAddr;
-    sendbuffer.dest = dest;
-    sendbuffer.etherType = etherType;
+    // Set Header Fields
+    sendbuffer.header.src = rtl_macAddr;
+    sendbuffer.header.dest = dest;
+    sendbuffer.header.etherType = etherType;
 
     // Copy Data
     for (size_t i = 0; i < length; i++) {
@@ -111,6 +111,47 @@ void rtl_transmit(char *data, size_t length, enum EtherType etherType, macAddr d
     tr %= 4;
 }
 
+// Handle Receipt of an Ethernet Frame
+void rtl_receive(void)
+{
+    // Get length of packet from receipt header
+    uint16_t length =
+        recvbuffer[recvOffset + RTL_RECV_LEN] |
+        recvbuffer[recvOffset + RTL_RECV_LEN + 1] << 8
+    ;
+
+    // Location of ethernet packet header (just past receipt header)
+    etherHeader *header =
+        (etherHeader *) &recvbuffer[recvOffset + RTL_RECV_PACKET]
+    ;
+
+    // Location of ethernet packet data (just past ethernet header)
+    uint8_t *data = (uint8_t *) header + sizeof(etherHeader);
+
+    // Print Source MAC
+    for (size_t i = 0; i < 6; i++) {
+        vga_printHex(header->src.x[i]);
+        if (i < 5) vga_printChar('-');
+    }
+    vga_println("");
+
+    // Print Data
+    for (size_t i = RTL_RECV_PACKET + sizeof(etherHeader); i < length - 4; i++) {
+        vga_printChar(
+            // Wrap around buffer
+            recvbuffer[(recvOffset + i) % sizeof(recvbuffer)]
+        );
+    }
+    vga_println("");
+
+    // Update Software Pointer
+    recvOffset = recvOffset + length + 4 + 3 & ~3;
+    recvOffset %= sizeof(recvbuffer);
+
+    // Update Driver Status
+    outw(ioBase + RTL_CAPR, recvOffset - 0x10);
+}
+
 // Handle an Interrupt
 void rtl_intHandler(void)
 {
@@ -120,6 +161,7 @@ void rtl_intHandler(void)
     // Receive-OK
     if ((intSource & RTL_ISR_ROK) != 0) {
         vga_println("ISR_ROK");
+        rtl_receive();
         outw(ioBase + RTL_ISR, RTL_ISR_ROK);
     }
 

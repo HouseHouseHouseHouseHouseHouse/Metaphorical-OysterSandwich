@@ -69,7 +69,7 @@ static char encodeNibbleHex(char data, bool lower)
     ;
 
     // Encode slightly differently for A-F
-    if (nibble > '9') nibble += 'A' - '9';
+    if (nibble > '9') nibble += 'A' - '9' - 1;
 
     return nibble;
 }
