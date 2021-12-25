@@ -1,9 +1,17 @@
 #include "rtl.h"
 
+#include "num.h"
 #include "../io/io.h"
 #include "../io/pci.h"
 #include "../io/vga.h"
 #include "../int/int.h"
+
+// Ethernet Frame Header
+typedef struct {
+    macAddr dest;
+    macAddr src;
+    uint16_t etherType;
+} __attribute__((packed)) etherHeader;
 
 // Transmission Buffer
 static struct {
@@ -18,6 +26,7 @@ static uint8_t recvbuffer[0x2010];
 // MAC Address
 macAddr rtl_macAddr;
 const macAddr broadcastAddr = {{0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF}};
+const macAddr emptyAddr = {{0, 0, 0, 0, 0, 0}};
 
 // IO Base Address
 static uint16_t ioBase;
@@ -64,7 +73,7 @@ bool rtl_init(void)
     rtl_reset();
 
     // Get MAC Address
-    for (int i = 0; i < 6; i++) {
+    for (size_t i = 0; i < 6; i++) {
         rtl_macAddr.x[i] = inb(ioBase + RTL_ID0 + i);
     }
 
@@ -89,7 +98,7 @@ void rtl_transmit(char *data, size_t length, enum EtherType etherType, macAddr d
     // Set Header Fields
     sendbuffer.header.src = rtl_macAddr;
     sendbuffer.header.dest = dest;
-    sendbuffer.header.etherType = etherType;
+    sendbuffer.header.etherType = num_endian(etherType);
 
     // Copy Data
     for (size_t i = 0; i < length; i++) {

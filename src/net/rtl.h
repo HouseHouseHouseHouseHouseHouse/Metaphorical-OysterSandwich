@@ -54,22 +54,17 @@
 #ifndef RTL_H
 #define RTL_H
 
-// MAC Addresses
+// MAC Address
 typedef struct { uint8_t x[6]; } __attribute__((packed)) macAddr;
 
-// Ethernet Frame Header
-typedef struct {
-    macAddr dest;
-    macAddr src;
-    uint16_t etherType;
-} __attribute__((packed)) etherHeader;
-
 extern macAddr rtl_macAddr;
-extern const macAddr broadcastAddr;
+extern const macAddr emptyAddr, broadcastAddr;
 
 // Ether-type
 enum EtherType {
-    ARP = 0x08 | 0x06 << 8
+    ETHER = 1,
+    IPV4 = 0x0800,
+    ARP = 0x0806
 };
 
 // Initialize

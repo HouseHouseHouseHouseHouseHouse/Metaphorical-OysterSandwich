@@ -10,19 +10,6 @@
 #ifndef INT_H
 #define INT_H
 
-// Actual Structure of an IDT entry
-typedef struct {
-    uint16_t isr_low;
-    uint16_t selector;
-    uint8_t reserved;
-    uint8_t attributes;
-    uint16_t isr_high;
-} __attribute__((packed)) IDTEntry;
-
-// IDT will be held here
-__attribute__((aligned(0x10)))
-extern IDTEntry idt[256];
-
 // IDT Register
 typedef struct {
     uint16_t limit;
