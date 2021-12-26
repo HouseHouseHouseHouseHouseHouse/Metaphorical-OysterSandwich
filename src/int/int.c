@@ -4,13 +4,13 @@
 #include "../mem/mem.h"
 
 // IDT will be held here
-struct {
+__attribute__((aligned(0x10))) struct {
     uint16_t isr_low;
     uint16_t selector;
     uint8_t reserved;
     uint8_t attributes;
     uint16_t isr_high;
-} __attribute__((packed)) __attribute__((aligned(0x10))) idt[256];
+} __attribute__((packed)) idt[256];
 
 // IDT Register Structure
 IDTRegister idtr = { .base = (uint32_t) &idt, .limit = sizeof(idt) - 1 };
