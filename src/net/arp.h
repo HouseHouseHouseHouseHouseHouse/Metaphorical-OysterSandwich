@@ -11,7 +11,7 @@
 // Query an Address
 macAddr arp_query(ipv4Addr target);
 
-// Handle ARP Reply
-void arp_reply(void);
+// Handle ARP Packet
+void arp_handle(uint16_t);
 
 #endif

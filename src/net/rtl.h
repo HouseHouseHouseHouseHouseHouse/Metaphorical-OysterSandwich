@@ -56,6 +56,7 @@
 
 // MAC Address
 typedef struct { uint8_t x[6]; } __attribute__((packed)) macAddr;
+bool rtl_eqMacAddr(macAddr, macAddr);
 
 extern macAddr rtl_macAddr;
 extern const macAddr emptyAddr, broadcastAddr;
@@ -72,6 +73,9 @@ bool rtl_init(void);
 
 // Transmit an Ethernet Frame
 void rtl_transmit(char *, size_t, enum EtherType, macAddr);
+
+// Copy Ethernet Frame Payload
+void rtl_copy(uint16_t, char *, uint16_t);
 
 // Handle an Interrupt
 extern void rtl_isr(void);

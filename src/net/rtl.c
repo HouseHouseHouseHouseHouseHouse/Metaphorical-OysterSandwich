@@ -37,6 +37,14 @@ static uint8_t intLine;
 // Keep track of the Transmission Register pair
 static uint8_t tr;
 
+// Compare MAC Addresses
+bool rtl_eqMacAddr(macAddr a, macAddr b)
+{
+    for (size_t i = 0; i < 6; i++) {
+        if (a.x[i] != b.x[i]) return false;
+    } return true;
+}
+
 // Perform a Software Reset
 static void rtl_reset(void)
 {
@@ -123,35 +131,41 @@ void rtl_transmit(char *data, size_t length, enum EtherType etherType, macAddr d
 // Handle Receipt of an Ethernet Frame
 void rtl_receive(void)
 {
+    // Location of ethernet packet header (just past receipt header)
+    etherHeader *header =
+        (etherHeader *) &recvbuffer[recvOffset + RTL_RECV_PACKET]
+    ;
+
+    // Call Appropriate Protocol Routines from the EtherType
+    switch (num_endian(header->etherType)) {
+        case ARP:
+            arp_handle(recvOffset);
+            break;
+
+        default:
+            break;
+    }
+}
+
+void rtl_copy(uint16_t frameOffset, char *buffer, uint16_t maxLength)
+{
     // Get length of packet from receipt header
     uint16_t length =
         recvbuffer[recvOffset + RTL_RECV_LEN] |
         recvbuffer[recvOffset + RTL_RECV_LEN + 1] << 8
     ;
 
-    // Location of ethernet packet header (just past receipt header)
-    etherHeader *header =
-        (etherHeader *) &recvbuffer[recvOffset + RTL_RECV_PACKET]
-    ;
+    // Discount Framing and Impose Maximum (avoid memory leads with possible padding)
+    length = length - (RTL_RECV_PACKET + sizeof(etherHeader)) - 4;
+    if (length > maxLength) length = maxLength;
 
-    // Location of ethernet packet data (just past ethernet header)
-    uint8_t *data = (uint8_t *) header + sizeof(etherHeader);
-
-    // Print Source MAC
-    for (size_t i = 0; i < 6; i++) {
-        vga_printHex(header->src.x[i]);
-        if (i < 5) vga_printChar('-');
+    // Copy Data (wrap around buffer)
+    for (size_t i = 0; i < length; i++) {
+        buffer[i] = recvbuffer [
+            (frameOffset + i + RTL_RECV_PACKET + sizeof(etherHeader))
+            % sizeof(recvbuffer)
+        ];
     }
-    vga_println("");
-
-    // Print Data
-    for (size_t i = RTL_RECV_PACKET + sizeof(etherHeader); i < length - 4; i++) {
-        vga_printChar(
-            // Wrap around buffer
-            recvbuffer[(recvOffset + i) % sizeof(recvbuffer)]
-        );
-    }
-    vga_println("");
 
     // Update Software Pointer
     recvOffset = recvOffset + length + 4 + 3 & ~3;
