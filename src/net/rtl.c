@@ -89,7 +89,7 @@ bool rtl_init(void)
     outl(ioBase + RTL_RBSTART, (uint32_t) &recvbuffer);
 
     // Configure Interrupts
-    outw(ioBase + RTL_IMR, RTL_ISR_ROK | RTL_ISR_TOK | RTL_ISR_LINKCHG | RTL_ISR_SERR);
+    outw(ioBase + RTL_IMR, RTL_ISR_ROK | RTL_ISR_LINKCHG | RTL_ISR_SERR);
 
     // Enable Transmitter & Receiver
     outb(ioBase + RTL_CR, RTL_CR_TE | RTL_CR_RE);
@@ -120,8 +120,8 @@ void rtl_transmit(char *data, size_t length, enum EtherType etherType, macAddr d
     outl(ioBase + RTL_TSD0 + tr * 4, (uint32_t) length + 14);
 
     // Wait for the Transmission
-    // while ((inl(ioBase + RTL_TSD0 + tr * 4) & RTL_TSD_TOK) == 0);
-    // vga_println("TOK");
+    while ((inl(ioBase + RTL_TSD0 + tr * 4) & RTL_TSD_TOK) == 0);
+    vga_println("TOK");
 
     // Increment Transmission Register Pair
     tr++;
@@ -155,12 +155,12 @@ void rtl_copy(uint16_t frameOffset, char *buffer, uint16_t maxLength)
         recvbuffer[recvOffset + RTL_RECV_LEN + 1] << 8
     ;
 
-    // Discount Framing and Impose Maximum (avoid memory leads with possible padding)
-    length = length - (RTL_RECV_PACKET + sizeof(etherHeader)) - 4;
-    if (length > maxLength) length = maxLength;
+    // Discount Framing and Impose Maximum (avoid memory leaks with possible padding)
+    uint16_t dataLength = length - (RTL_RECV_PACKET + sizeof(etherHeader)) - 4;
+    if (dataLength > maxLength) dataLength = maxLength;
 
     // Copy Data (wrap around buffer)
-    for (size_t i = 0; i < length; i++) {
+    for (size_t i = 0; i < dataLength; i++) {
         buffer[i] = recvbuffer [
             (frameOffset + i + RTL_RECV_PACKET + sizeof(etherHeader))
             % sizeof(recvbuffer)
@@ -183,16 +183,16 @@ void rtl_intHandler(void)
 
     // Receive-OK
     if ((intSource & RTL_ISR_ROK) != 0) {
-        vga_println("ISR_ROK");
+        vga_println("ROK");
         rtl_receive();
         outw(ioBase + RTL_ISR, RTL_ISR_ROK);
     }
 
     // Transmit-OK
-    else if ((intSource & RTL_ISR_TOK) != 0) {
-        vga_println("ISR_TOK");
-        outw(ioBase + RTL_ISR, RTL_ISR_TOK);
-    }
+    // else if ((intSource & RTL_ISR_TOK) != 0) {
+    //     vga_println("ISR_TOK");
+    //     outw(ioBase + RTL_ISR, RTL_ISR_TOK);
+    // }
 
     // Link Change
     else if ((intSource & RTL_ISR_LINKCHG) != 0) {

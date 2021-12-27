@@ -125,7 +125,7 @@ void arp_handle(uint16_t recvOffset)
     rtl_copy(recvOffset, (char *) &recv, sizeof(recv));
 
     // Break if this packet is not for us
-    if (!rtl_eqMacAddr(recv.targetHardAddr, rtl_macAddr)) return;
+    if (recv.targetProtAddr != ip_ipv4Addr) return;
 
     // Check Op-Code
     switch (num_endian(recv.op)) {
