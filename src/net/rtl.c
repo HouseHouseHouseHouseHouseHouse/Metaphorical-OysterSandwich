@@ -1,6 +1,8 @@
 #include "rtl.h"
 
 #include "num.h"
+#include "arp.h"
+#include "ip.h"
 #include "../io/io.h"
 #include "../io/pci.h"
 #include "../io/vga.h"
@@ -14,9 +16,10 @@ typedef struct {
 } __attribute__((packed)) etherHeader;
 
 // Transmission Buffer
+__attribute__((aligned(0x10)))
 static struct {
     etherHeader header;
-    uint8_t data[0x0700 - 14];
+    uint8_t data[0x0700 - sizeof(etherHeader)];
 } __attribute__((packed)) sendbuffer;
 
 // Receipt Buffer
@@ -101,12 +104,15 @@ bool rtl_init(void)
 }
 
 // Transmit an Ethernet Frame
-void rtl_transmit(char *data, size_t length, enum EtherType etherType, macAddr dest)
+int rtl_transmit(char *data, size_t length, enum EtherType etherType, macAddr dest)
 {
     // Set Header Fields
     sendbuffer.header.src = rtl_macAddr;
     sendbuffer.header.dest = dest;
     sendbuffer.header.etherType = num_endian(etherType);
+
+    // Avoid Possible Memory Leak
+    if (length > sizeof(sendbuffer)) return -1;
 
     // Copy Data
     for (size_t i = 0; i < length; i++) {
@@ -117,15 +123,28 @@ void rtl_transmit(char *data, size_t length, enum EtherType etherType, macAddr d
     outl(ioBase + RTL_TSAD0 + tr * 4, (uint32_t) &sendbuffer);
     
     // Set Size and Transmit
-    outl(ioBase + RTL_TSD0 + tr * 4, (uint32_t) length + 14);
+    outl(ioBase + RTL_TSD0 + tr * 4, (uint32_t) length + sizeof(sendbuffer.header));
 
     // Wait for the Transmission
-    while ((inl(ioBase + RTL_TSD0 + tr * 4) & RTL_TSD_TOK) == 0);
-    vga_println("TOK");
+    uint32_t transmitStatus = 0;
+    while (transmitStatus == 0)
+        transmitStatus =
+        inl(ioBase + RTL_TSD0 + tr * 4) &
+        (RTL_TSD_TOK | RTL_TSD_TABT)
+    ;
 
     // Increment Transmission Register Pair
     tr++;
     tr %= 4;
+
+    // Report and Return
+    if (transmitStatus == RTL_TSD_TOK) {
+        vga_println("TOK");
+        return 0;
+    } else {
+        vga_println("TABT");
+        return -1;
+    }
 }
 
 // Handle Receipt of an Ethernet Frame

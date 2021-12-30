@@ -2,6 +2,10 @@
 #include <stddef.h>
 #include <stdint.h>
 
+// Maximum Transfer Unit
+
+#define RTL_MTU 1500
+
 // Register I/O Addresses
 
 #define RTL_ID0 0x00
@@ -25,6 +29,7 @@
 
 #define RTL_TSD_OWN 1 << 13
 #define RTL_TSD_TOK 1 << 15
+#define RTL_TSD_TABT 1 << 30
 
 #define RTL_ISR_ROK 1 << 0
 #define RTL_ISR_TOK 1 << 2
@@ -72,7 +77,7 @@ enum EtherType {
 bool rtl_init(void);
 
 // Transmit an Ethernet Frame
-void rtl_transmit(char *, size_t, enum EtherType, macAddr);
+int rtl_transmit(char *, size_t, enum EtherType, macAddr);
 
 // Copy Ethernet Frame Payload
 void rtl_copy(uint16_t, char *, uint16_t);

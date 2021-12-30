@@ -52,7 +52,7 @@ macAddr arp_query(ipv4Addr target)
 
     // Sender Information
     request.senderHardAddr = rtl_macAddr;
-    request.senderProtAddr = ip_ipv4Addr;
+    request.senderProtAddr = ipv4_addr;
 
     // Target Information
     request.targetHardAddr = emptyAddr;
@@ -86,7 +86,7 @@ void arp_handleRequest(void)
 
     // Sender Information
     reply.senderHardAddr = rtl_macAddr;
-    reply.senderProtAddr = ip_ipv4Addr;
+    reply.senderProtAddr = ipv4_addr;
 
     // Target Information
     reply.targetHardAddr = recv.senderHardAddr;
@@ -125,7 +125,7 @@ void arp_handle(uint16_t recvOffset)
     rtl_copy(recvOffset, (char *) &recv, sizeof(recv));
 
     // Break if this packet is not for us
-    if (recv.targetProtAddr != ip_ipv4Addr) return;
+    if (recv.targetProtAddr != ipv4_addr) return;
 
     // Check Op-Code
     switch (num_endian(recv.op)) {

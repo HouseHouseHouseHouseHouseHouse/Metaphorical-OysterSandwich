@@ -4,7 +4,8 @@
 #include "../mem/mem.h"
 
 // IDT will be held here
-__attribute__((aligned(0x10))) struct {
+__attribute__((aligned(0x10)))
+struct {
     uint16_t isr_low;
     uint16_t selector;
     uint8_t reserved;

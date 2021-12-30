@@ -4,6 +4,7 @@
 
 #include "net/rtl.h"
 #include "net/arp.h"
+#include "net/ip.h"
 
 void main(void)
 {
@@ -23,8 +24,9 @@ void main(void)
     }
     vga_println("");
 
-    // Send an ARP Request
-    arp_query(IPV4(224, 0, 0, 1));
+    // Send IP Packet
+    ipv4_send(IPV4(192, 168, 1, 1), NONE, "Hello, world", 12);
+    ipv4_send(IPV4(192, 168, 1, 1), NONE, "foo", 3);
 
     // Hold here
     while (true);
