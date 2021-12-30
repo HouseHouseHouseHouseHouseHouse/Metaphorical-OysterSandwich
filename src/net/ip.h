@@ -12,7 +12,7 @@
     c << 16 | \
     d << 24
 
-#define IP_FRAGFLAG_DF 1 << 7
+#define IP_FRAGFLAG_DF 1 << 6
 
 #ifndef IP_H
 #define IP_H

@@ -92,15 +92,16 @@ void ipv4_handle(uint16_t recvOffset)
 // Calculate IP Checksum
 uint16_t ip_checksum(uint16_t *data, uint16_t length)
 {
-    uint16_t sum = 0;
-    uint16_t units = 0;
+    uint32_t sum = 0;
 
-    // Sum Words and Units
+    // Sum Words and Carry
     for (size_t i = 0; i < length / 2; i++) {
         sum += data[i];
-        units += data[i] >> 15 & 1;
+        sum = (sum & 0xFFFF) + (sum >> 16);
     }
 
-    // Carriage, One's Complement, and Byte Order
-    return num_endian(~(sum + units / 2));
+    if (length & 1) sum += data[length - 1] & 0xFF;
+
+    // One's Complement
+    return ~sum;
 }
