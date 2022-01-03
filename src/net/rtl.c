@@ -104,12 +104,15 @@ bool rtl_init(void)
 }
 
 // Transmit an Ethernet Frame
-int rtl_transmit(char *data, size_t length, enum EtherType etherType, macAddr dest)
+int rtl_transmit(char *data, uint16_t length, enum EtherType etherType, macAddr dest)
 {
     // Set Header Fields
     sendbuffer.header.src = rtl_macAddr;
     sendbuffer.header.dest = dest;
-    sendbuffer.header.etherType = num_endian(etherType);
+
+    // EtherType is Length if no Protocol
+    if (etherType == ETHER) sendbuffer.header.etherType = num_endian(length);
+    else sendbuffer.header.etherType = num_endian(etherType);
 
     // Avoid Possible Memory Leak
     if (length > sizeof(sendbuffer)) return -1;
@@ -150,19 +153,27 @@ int rtl_transmit(char *data, size_t length, enum EtherType etherType, macAddr de
 // Handle Receipt of an Ethernet Frame
 void rtl_receive(void)
 {
-    // Location of ethernet packet header (just past receipt header)
-    etherHeader *header =
-        (etherHeader *) &recvbuffer[recvOffset + RTL_RECV_PACKET]
-    ;
+    // Handle Frames until Buffer is Empty
+    while (!(inb(ioBase + RTL_CR) & RTL_CR_BUFE))
+    {
+        // Location of Ethernet Header (just past receipt header)
+        etherHeader *header =
+            (etherHeader *) &recvbuffer[recvOffset + RTL_RECV_PACKET]
+        ;
 
-    // Call Appropriate Protocol Routines from the EtherType
-    switch (num_endian(header->etherType)) {
-        case ARP:
-            arp_handle(recvOffset);
-            break;
+        // Call Appropriate Protocol Routines from the EtherType
+        switch (num_endian(header->etherType)) {
+            case IPV4:
+                ipv4_handle(header->src, recvOffset);
+                break;
 
-        default:
-            break;
+            case ARP:
+                arp_handle(recvOffset);
+                break;
+
+            default:
+                break;
+        }
     }
 }
 

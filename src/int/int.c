@@ -14,7 +14,10 @@ struct {
 } __attribute__((packed)) idt[256];
 
 // IDT Register Structure
-IDTRegister idtr = { .base = (uint32_t) &idt, .limit = sizeof(idt) - 1 };
+IDTRegister idtr = {
+    .base = (uint32_t) &idt,
+    .limit = sizeof(idt) - 1
+};
 
 // Encode IDT Entry
 static void int_encodeIDTEntry(uint8_t target, uint32_t isr_base, bool trap)
@@ -77,4 +80,15 @@ void int_end(uint8_t line)
 {
     // Send EOI to PIC
     pic_sendEOI(line);
+}
+
+// Enable/Disable Interrupts
+void int_enable(void)
+{
+    asm ("sti");
+}
+
+void int_disable(void)
+{
+    asm ("cli");
 }

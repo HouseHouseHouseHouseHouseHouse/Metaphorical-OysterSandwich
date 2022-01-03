@@ -36,7 +36,8 @@ enum OpCode {
 macAddr arp_query(ipv4Addr target)
 {
     // Look through cache
-    for (size_t i = 0; i < 256; i++) {
+    for (size_t i = 0; i < 256; i++)
+    {
         // If addresses match, return hardware address
         if (cache[i].protAddr == target) return cache[i].hardAddr;
     }
@@ -61,17 +62,34 @@ macAddr arp_query(ipv4Addr target)
     // Op-Code
     request.op = num_endian(REQUEST);
 
-    // Send ARP Request
-    rtl_transmit((char *) &request, sizeof(request), ARP, broadcastAddr);
-
-    // Prepare next Entry in ARP Cache
+    // Prepare next Cache Entry
     uint8_t cacheIndex = cacheCounter;
     cacheCounter++;
     cache[cacheIndex].protAddr = target;
 
+    // Send ARP Request
+    rtl_transmit((char *) &request, sizeof(request), ARP, broadcastAddr);
+
     // Wait for and return the Reply
     while (rtl_eqMacAddr(cache[cacheIndex].hardAddr, emptyAddr));
     return cache[cacheIndex].hardAddr;
+}
+
+// Manually Cache Address
+void arp_cache(macAddr hardAddr, ipv4Addr protAddr)
+{
+    // Use an already existing cache entry
+    for (size_t i = 0; i < 256; i++) {
+        if (cache[i].protAddr == protAddr) {
+            cache[i].hardAddr = hardAddr;
+            return;
+        }
+    }
+
+    // Otherwise, use next cache entry
+    cache[cacheCounter].protAddr = protAddr;
+    cache[cacheCounter].hardAddr = hardAddr;
+    cacheCounter++;
 }
 
 // Handle ARP Request

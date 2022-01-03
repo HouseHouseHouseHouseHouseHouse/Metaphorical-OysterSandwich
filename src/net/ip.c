@@ -24,13 +24,21 @@ static struct {
 } __attribute__((packed)) send, recv;
 
 // Our Configuration
-ipv4Addr ipv4_addr = IPV4(192, 168, 1, 12);
+ipv4Addr ipv4_addr = IPV4(10, 0, 2, 15);
 ipv4Addr ipv4_subMask = IPV4(255, 255, 255, 0);
-ipv4Addr ipv4_gate = IPV4(192, 168, 1, 1);
+ipv4Addr ipv4_gate = IPV4(10, 0, 2, 2);
+
+// Loopback Addresses
+static const ipv4Addr ipv4_loAddr = IPV4(127, 0, 0, 1);
+static const ipv4Addr ipv4_loRange = IPV4(127, 0, 0, 0);
+static const ipv4Addr ipv4_loSubMask = IPV4(255, 0, 0, 0);
 
 // Send a Packet
 int ipv4_send(ipv4Addr dest, enum Protocol prot, char *data, uint16_t length)
 {
+    // Are we using Loopback
+    bool lo = (dest & ipv4_loSubMask) == ipv4_loRange;
+
     // Set Header Fields
     send.header.versionHeaderLength = 4 << 4 | 5;
     send.header.tos = 0;
@@ -42,51 +50,80 @@ int ipv4_send(ipv4Addr dest, enum Protocol prot, char *data, uint16_t length)
     send.header.prot = prot;
 
     // Addresses
-    send.header.src = ipv4_addr;
     send.header.dest = dest;
+    if (lo) send.header.src = ipv4_loAddr;
+    else send.header.src = ipv4_addr;
 
-    // Local Destination Address
-    ipv4Addr destLocal =
-        (dest & ipv4_subMask) == (ipv4_addr & ipv4_subMask) ?
-        dest : ipv4_gate
-    ;
-
+    // Packet Length
     uint16_t lengthTotal = sizeof(send.header) + length;
-
-    // Length
     if (lengthTotal > RTL_MTU) return -1;
     send.header.length = num_endian(lengthTotal);
+
+    // Checksum
+    send.header.checksum = 0;
+    send.header.checksum = ip_checksum((uint16_t *) &send.header, sizeof(send.header));
 
     // Copy Data
     for (size_t i = 0; i < length; i++) {
         send.data[i] = data[i];
     }
 
-    // Checksum
-    send.header.checksum = 0;
-    send.header.checksum = ip_checksum((uint16_t *) &send.header, sizeof(send.header));
+    // Loopback
+    if (lo)
+    {
+        // "Transmit" by copying to Receive Buffer
+        for (size_t i = 0; i < lengthTotal; i++) {
+            recv.data[i] = send.data[i];
+        }
 
-    // Transmit Frame
-    return rtl_transmit((char *) &send, lengthTotal, IPV4, arp_query(destLocal));
+        // Handle Packet
+        ipv4_handleActually();
+        return 0;
+    }
+
+    // Local Destination MAC Address
+    macAddr destLocal = arp_query(
+        (dest & ipv4_subMask) == (ipv4_addr & ipv4_subMask) ?
+        dest : ipv4_gate
+    );
+
+    // Transmit Frame over Ethernet
+    return rtl_transmit((char *) &send, lengthTotal, IPV4, destLocal);
 }
 
-// Handle a Packet
-void ipv4_handle(uint16_t recvOffset)
+// Actually Handle a Packet
+void ipv4_handleActually(void)
 {
-    // Copy Packet Over
-    rtl_copy(recvOffset, (char *) &recv, sizeof(recv));
-
-    // Validate Destination
-    if (recv.header.dest != ipv4_addr) return;
-
     // Validate Checksum
     if (ip_checksum((uint16_t *) &recv.header, sizeof(recv.header)) != 0) return;
+
+    // Decrement TTL
+    recv.header.ttl--;
 
     // Pass to Protocol
     switch (recv.header.prot) {
         default:
             break;
     }
+}
+
+// Handle a Packet
+void ipv4_handle(macAddr src, uint16_t recvOffset)
+{
+    // Copy Packet Over
+    rtl_copy(recvOffset, (char *) &recv, sizeof(recv));
+
+    // Validate Version/Options
+    if (recv.header.versionHeaderLength != (4 << 4 | 5)) return;
+
+    // Validate Destination
+    if (recv.header.dest != ipv4_addr) return;
+
+    // Cache Source MAC Address
+    arp_cache(src, recv.header.src);
+
+    // Continue Handling Packet
+    ipv4_handleActually();
 }
 
 // Calculate IP Checksum

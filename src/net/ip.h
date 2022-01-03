@@ -36,7 +36,7 @@ enum Protocol {
 int ipv4_send(ipv4Addr, enum Protocol, char *, uint16_t);
 
 // Handle a Packet
-void ipv4_handle(uint16_t);
+void ipv4_handle(macAddr, uint16_t);
 
 // Copy Packet
 void ipv4_copy(char *);

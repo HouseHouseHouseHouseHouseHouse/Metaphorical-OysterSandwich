@@ -44,7 +44,7 @@ clean:
 
 test:
 	qemu-system-i386 -cdrom build.iso \
-	-netdev tap,ifname=tap0,id=if0 \
+	-netdev user,id=if0 \
 	-device rtl8139,netdev=if0,mac=52:54:00:12:34:56 \
 	-object filter-dump,id=network_filter_object,netdev=if0,file=netdump.dat \
 	-s -S

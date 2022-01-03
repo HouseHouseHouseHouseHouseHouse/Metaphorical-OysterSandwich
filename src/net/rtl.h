@@ -42,6 +42,7 @@
 #define RTL_RCR_AB 1 << 3
 #define RTL_RCR_WRAP 1 << 7
 
+#define RTL_CR_BUFE 1 << 0
 #define RTL_CR_TE 1 << 2
 #define RTL_CR_RE 1 << 3
 #define RTL_CR_RST 1 << 4
@@ -77,7 +78,7 @@ enum EtherType {
 bool rtl_init(void);
 
 // Transmit an Ethernet Frame
-int rtl_transmit(char *, size_t, enum EtherType, macAddr);
+int rtl_transmit(char *, uint16_t, enum EtherType, macAddr);
 
 // Copy Ethernet Frame Payload
 void rtl_copy(uint16_t, char *, uint16_t);

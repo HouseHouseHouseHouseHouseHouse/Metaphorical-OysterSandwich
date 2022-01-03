@@ -30,4 +30,8 @@ void int_setupIRQ(uint8_t, uint32_t);
 // End Interrupt
 void int_end(uint8_t);
 
+// Enable/Disable Interrupts
+void int_enable(void);
+void int_disable(void);
+
 #endif
