@@ -50,9 +50,9 @@ int ipv4_send(ipv4Addr dest, enum Protocol prot, char *data, uint16_t length)
     send.header.prot = prot;
 
     // Addresses
-    send.header.dest = dest;
     if (lo) send.header.src = ipv4_loAddr;
     else send.header.src = ipv4_addr;
+    send.header.dest = dest;
 
     // Packet Length
     uint16_t lengthTotal = sizeof(send.header) + length;
@@ -63,6 +63,7 @@ int ipv4_send(ipv4Addr dest, enum Protocol prot, char *data, uint16_t length)
     send.header.checksum = ip_checksum((uint16_t *) &send.header, sizeof(send.header));
 
     // Copy Data
+    if (length > sizeof(send.data)) return -1;
     for (size_t i = 0; i < length; i++) {
         send.data[i] = data[i];
     }
