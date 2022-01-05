@@ -14,7 +14,7 @@ typedef struct {
 __attribute__((aligned(0x10)))
 struct {
     header header;
-    uint16_t data[0xFFFF - sizeof(header)];
+    uint8_t data[0xFFFF - sizeof(header)];
 } __attribute__((packed)) send, recv;
 
 // Send a Datagram
