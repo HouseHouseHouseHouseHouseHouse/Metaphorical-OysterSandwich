@@ -28,8 +28,8 @@ void main(void)
     rtl_transmit("Hello, world", 12, ETHER, broadcastAddr);
 
     // Send IP Packets
-    ipv4_send(IPV4(192, 168, 1, 241), NONE, "Hello, world", 12);
-    ipv4_send(IPV4(192, 168, 1, 241), NONE, "foo", 3);
+    // ipv4_send(IPV4(192, 168, 1, 241), NONE, "Hello, world", 12);
+    // ipv4_send(IPV4(192, 168, 1, 241), NONE, "foo", 3);
 
     // Hold here
     while (true);

@@ -38,8 +38,8 @@ int ipv4_send(ipv4Addr, enum Protocol, char *, uint16_t);
 // Handle a Packet
 void ipv4_handle(macAddr, uint16_t);
 
-// Copy Packet
-void ipv4_copy(char *);
+// Copy Packet Payload
+uint16_t ipv4_copy(char *, uint16_t);
 
 // Calculate IP Checksum
 uint16_t ip_checksum(uint16_t *, uint16_t);

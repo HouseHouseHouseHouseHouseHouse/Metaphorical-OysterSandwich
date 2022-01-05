@@ -177,6 +177,7 @@ void rtl_receive(void)
     }
 }
 
+// Copy Ethernet Frame Payload
 void rtl_copy(uint16_t frameOffset, char *buffer, uint16_t maxLength)
 {
     // Get length of packet from receipt header
@@ -186,7 +187,7 @@ void rtl_copy(uint16_t frameOffset, char *buffer, uint16_t maxLength)
     ;
 
     // Discount Framing and Impose Maximum (avoid memory leaks with possible padding)
-    uint16_t dataLength = length - (RTL_RECV_PACKET + sizeof(etherHeader)) - 4;
+    uint16_t dataLength = length - (RTL_RECV_PACKET + sizeof(etherHeader));
     if (dataLength > maxLength) dataLength = maxLength;
 
     // Copy Data (wrap around buffer)

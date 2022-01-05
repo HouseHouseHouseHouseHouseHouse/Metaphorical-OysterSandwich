@@ -24,9 +24,9 @@ static struct {
 } __attribute__((packed)) send, recv;
 
 // Our Configuration
-ipv4Addr ipv4_addr = IPV4(10, 0, 2, 15);
+ipv4Addr ipv4_addr = IPV4(192, 168, 1, 12);
 ipv4Addr ipv4_subMask = IPV4(255, 255, 255, 0);
-ipv4Addr ipv4_gate = IPV4(10, 0, 2, 2);
+ipv4Addr ipv4_gate = IPV4(192, 168, 1, 1);
 
 // Loopback Addresses
 static const ipv4Addr ipv4_loAddr = IPV4(127, 0, 0, 1);
@@ -56,7 +56,6 @@ int ipv4_send(ipv4Addr dest, enum Protocol prot, char *data, uint16_t length)
 
     // Packet Length
     uint16_t lengthTotal = sizeof(send.header) + length;
-    if (lengthTotal > RTL_MTU) return -1;
     send.header.length = num_endian(lengthTotal);
 
     // Checksum
@@ -80,6 +79,9 @@ int ipv4_send(ipv4Addr dest, enum Protocol prot, char *data, uint16_t length)
         ipv4_handleActually();
         return 0;
     }
+
+    // Length check for Ethernet
+    else if (lengthTotal > RTL_MTU) return -1;
 
     // Local Destination MAC Address
     macAddr destLocal = arp_query(
@@ -124,6 +126,27 @@ void ipv4_handle(macAddr src, uint16_t recvOffset)
 
     // Continue Handling Packet
     ipv4_handleActually();
+}
+
+// Copy Packet Payload
+uint16_t ipv4_copy(char *buffer, uint16_t maxLength)
+{
+    // Data Length
+    uint16_t length =
+        num_endian(recv.header.length) -
+        (recv.header.versionHeaderLength & 0x0F) * 4
+    ;
+
+    // Impose Maximum
+    if (length > maxLength || length > sizeof(recv)) return 0;
+
+    // Copy Data
+    for (size_t i = 0; i < length; i++) {
+        buffer[i] = recv.data[i];
+    }
+
+    // Return Length
+    return length;
 }
 
 // Calculate IP Checksum
