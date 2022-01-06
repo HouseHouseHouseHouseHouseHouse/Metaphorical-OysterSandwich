@@ -14,6 +14,6 @@ enum ICMPType {
 };
 
 // Handle a Message
-void icmp_handle(ipv4Addr, ipv4Addr);
+void icmp_handle(ipv4Addr);
 
 #endif

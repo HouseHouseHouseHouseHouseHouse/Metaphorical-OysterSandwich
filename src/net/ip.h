@@ -29,7 +29,7 @@ extern ipv4Addr ipv4_gate;
 enum Protocol {
     ICMP = 1,
     UDP = 17,
-    NONE = 0xFF
+    IP_NONE = 0xFF
 };
 
 // Send a Packet
@@ -37,6 +37,9 @@ int ipv4_send(ipv4Addr, enum Protocol, char *, uint16_t);
 
 // Handle a Packet
 void ipv4_handle(macAddr, uint16_t);
+
+// Get IP Address
+ipv4Addr ipv4_getAddr(ipv4Addr);
 
 // Copy Packet Payload
 uint16_t ipv4_copy(char *, uint16_t);

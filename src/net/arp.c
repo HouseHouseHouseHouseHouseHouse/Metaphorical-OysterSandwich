@@ -53,7 +53,7 @@ macAddr arp_query(ipv4Addr target)
 
     // Sender Information
     request.senderHardAddr = rtl_macAddr;
-    request.senderProtAddr = ipv4_addr;
+    request.senderProtAddr = ipv4_getAddr(target);
 
     // Target Information
     request.targetHardAddr = emptyAddr;

@@ -16,7 +16,7 @@ static struct {
     header header;
     uint8_t data[0x0240];
 } __attribute__((packed)) send, recv;
-uint16_t length;
+static uint16_t length;
 
 // Send a Prepared Message
 int icmp_send(ipv4Addr dest)
@@ -43,9 +43,9 @@ void icmp_handleEchoRequest(void)
 }
 
 // Handle a Message
-void icmp_handle(ipv4Addr src, ipv4Addr dest)
+void icmp_handle(ipv4Addr src)
 {
-    // Copy Packet
+    // Copy Message
     length = ipv4_copy((char *) &recv, sizeof(recv));
     if (length == 0) return;
 

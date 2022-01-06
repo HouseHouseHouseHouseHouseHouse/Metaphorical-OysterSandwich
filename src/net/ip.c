@@ -105,6 +105,10 @@ void ipv4_handleActually(void)
 
     // Pass to Protocol
     switch (recv.header.prot) {
+        case ICMP:
+            icmp_handle(recv.header.src);
+            break;
+
         default:
             break;
     }
@@ -116,7 +120,7 @@ void ipv4_handle(macAddr src, uint16_t recvOffset)
     // Copy Packet Over
     rtl_copy(recvOffset, (char *) &recv, sizeof(recv));
 
-    // Validate Version/Options
+    // Validate Version/No Options
     if (recv.header.versionHeaderLength != (4 << 4 | 5)) return;
 
     // Validate Destination
@@ -127,6 +131,16 @@ void ipv4_handle(macAddr src, uint16_t recvOffset)
 
     // Continue Handling Packet
     ipv4_handleActually();
+}
+
+// Get IP Address
+ipv4Addr ipv4_getAddr(ipv4Addr dest)
+{
+    // Destination is Loopback
+    if ((dest & ipv4_loSubMask) == ipv4_loRange) return ipv4_loAddr;
+
+    // Destination is over Ethernet
+    else return ipv4_addr;
 }
 
 // Copy Packet Payload
