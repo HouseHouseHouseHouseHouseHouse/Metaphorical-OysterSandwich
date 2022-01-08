@@ -29,7 +29,7 @@ void main(void)
     rtl_transmit("Hello, world", 12, ETHER, broadcastAddr);
 
     // Send IP Packets
-    udp_send(IPV4(192, 168, 1, 241), 44444, 44444, "Hello, world", 12);
+    // udp_send(IPV4(192, 168, 1, 241), 44444, 44444, "Hello, world", 12);
 
     // Hold here
     while (true);

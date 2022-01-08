@@ -25,4 +25,7 @@ void vga_println(char *);
 // Print Character as Hex
 void vga_printHex(char);
 
+// Print Buffer as Hex
+void vga_printBufferHex(char *, size_t);
+
 #endif

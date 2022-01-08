@@ -55,7 +55,7 @@ void vga_println(char *data)
     vga_print(data);
     
     // Next Line
-    row++;
+    if (++row == VGA_ROWS) row = 0;
     col = 0;
 }
 
@@ -80,4 +80,16 @@ void vga_printHex(char data)
     // Print Nibbles Sequentially
     vga_printChar(encodeNibbleHex(data, false));
     vga_printChar(encodeNibbleHex(data, true));
+}
+
+// Print Buffer as Hex
+void vga_printBufferHex(char *data, size_t length)
+{
+    // Loop through Buffer
+    for (size_t i = 0; i < length; i++) {
+        // Print Character
+        vga_printHex(data[i]);
+
+        advance();
+    }
 }
