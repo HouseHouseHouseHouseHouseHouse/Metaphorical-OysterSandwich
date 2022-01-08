@@ -2,9 +2,10 @@
 #include <stddef.h>
 #include <stdint.h>
 
-// Maximum Transfer Unit
+// Min/Max Transfer Unit
 
 #define RTL_MTU 1500
+#define RTL_MIN 46
 
 // Register I/O Addresses
 
@@ -54,8 +55,8 @@
 #define RTL_RECV_PACKET 4
 
 #define RTL_PCI_VENDOR_DEVICE 0x813910EC
-// #define RTL_PCI_ADDR 3 << 8 | 3 << 3 | 0
-#define RTL_PCI_ADDR 0 << 8 | 3 << 3 | 0
+#define RTL_PCI_ADDR 3 << 8 | 3 << 3 | 0
+// #define RTL_PCI_ADDR 0 << 8 | 3 << 3 | 0
 
 #ifndef RTL_H
 #define RTL_H

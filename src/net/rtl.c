@@ -116,18 +116,24 @@ int rtl_transmit(char *data, uint16_t length, enum EtherType etherType, macAddr 
     else sendbuffer.header.etherType = num_endian(etherType);
 
     // Avoid Possible Memory Leak
-    if (length > sizeof(sendbuffer)) return -1;
+    if (length > sizeof(sendbuffer.data)) return -1;
 
     // Copy Data
     for (size_t i = 0; i < length; i++) {
         sendbuffer.data[i] = data[i];
     }
 
+    // Copy Padding
+    for (size_t i = length; i < RTL_MIN; i++) {
+        sendbuffer.data[i] = 0;
+        length = i + 1;
+    }
+
     // Set Transmission Start Address
     outl(ioBase + RTL_TSAD0 + tr * 4, (uint32_t) &sendbuffer);
     
     // Set Size and Transmit
-    outl(ioBase + RTL_TSD0 + tr * 4, (uint32_t) length + sizeof(sendbuffer.header));
+    outl(ioBase + RTL_TSD0 + tr * 4, length + sizeof(sendbuffer.header));
 
     // Wait for the Transmission
     uint32_t transmitStatus = 0;
