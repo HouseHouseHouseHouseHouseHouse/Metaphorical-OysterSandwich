@@ -6,12 +6,12 @@
 #define TAR_H
 
 // Initialization
-void tar_init(void);
+bool tar_init(uint32_t *);
 
 // Find File
 int tar_find(char *);
 
 // Copy File Block
-void tar_copy(uint16_t);
+int tar_copy(uint16_t, char *);
 
 #endif

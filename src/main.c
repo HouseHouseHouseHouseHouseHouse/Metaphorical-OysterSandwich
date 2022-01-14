@@ -9,11 +9,17 @@
 
 void main(void)
 {
+    // Multiboot Information
+    uint32_t *mbootInfo;
+    asm volatile ("movl %%ebx, %0" : "=r"(mbootInfo));
+
     // Perform Initializations
     mem_init();
     int_init();
     rtl_init();
     vga_init();
+
+    tar_init(mbootInfo);
 
     // Print Brand String
     vga_println("Metaphorical-OysterSandwich, by Jacob Bates");
@@ -24,6 +30,8 @@ void main(void)
         if (i < 5) vga_printChar('-');
     }
     vga_println("");
+
+    tar_find("initrd/config");
 
     // Send Ethernet Frame
     rtl_transmit("Hello, world", 12, ETHER, broadcastAddr);

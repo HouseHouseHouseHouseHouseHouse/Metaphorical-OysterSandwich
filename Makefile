@@ -20,14 +20,17 @@ CCFLAGS += -g
 LOOP0	:= /dev/loop6
 LOOP1	:= /dev/loop7
 
-.PHONY: all test debug sys iso clean test
+.PHONY: all test debug iso clean test
 
 all: iso clean
 
-sys: $(OBJS) src/boot.o src/main.o
+boot/sys: $(OBJS) src/boot.o src/main.o
 	$(CC) -T linker.ld -o boot/sys -nostdlib src/boot.o src/main.o $(OBJS) -lgcc
 
-iso: sys
+boot/initrd: initrd/*
+	tar -cf boot/initrd initrd/*
+
+iso: boot/*
 	mkdir iso
 	cp -r boot/ iso/
 	grub-mkrescue -o build.iso iso/
