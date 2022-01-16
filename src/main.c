@@ -1,6 +1,7 @@
 #include "io/vga.h"
 #include "mem/mem.h"
 #include "int/int.h"
+#include "file/tar.h"
 
 #include "net/rtl.h"
 #include "net/arp.h"
@@ -16,10 +17,16 @@ void main(void)
     // Perform Initializations
     mem_init();
     int_init();
-    rtl_init();
     vga_init();
 
     tar_init(mbootInfo);
+
+    if (!rtl_init()) {
+        vga_println("Failed to initialize Ethernet Adaptor");
+        return;
+    }
+
+    arp_init();
 
     // Print Brand String
     vga_println("Metaphorical-OysterSandwich, by Jacob Bates");
@@ -37,7 +44,7 @@ void main(void)
     rtl_transmit("Hello, world", 12, ETHER, broadcastAddr);
 
     // Send IP Packets
-    // udp_send(IPV4(192, 168, 1, 241), 44444, 44444, "Hello, world", 12);
+    udp_send(IPV4(192, 168, 1, 1), 44444, 44444, "Hello, world", 12);
 
     // Hold here
     while (true);

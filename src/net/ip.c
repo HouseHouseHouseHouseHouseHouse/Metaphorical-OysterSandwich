@@ -1,6 +1,7 @@
 #include "ip.h"
 
 #include "arp.h"
+#include "icmp.h"
 
 // Packet Header
 typedef struct {
@@ -90,8 +91,9 @@ int ipv4_send(ipv4Addr dest, enum Protocol prot, char *data, uint16_t length)
         dest : ipv4_gate
     );
 
-    // Transmit Frame over Ethernet
-    return rtl_transmit((char *) &send, lengthTotal, IPV4, destLocal);
+    // Transmit Frame over Ethernet if Sendable
+    if (rtl_eqMacAddr(destLocal, emptyAddr)) return -1;
+    else return rtl_transmit((char *) &send, lengthTotal, IPV4, destLocal);
 }
 
 // Actually Handle a Packet

@@ -8,6 +8,9 @@
 #ifndef ARP_H
 #define ARP_H
 
+// Initialization
+void arp_init(void);
+
 // Query an Address
 macAddr arp_query(ipv4Addr);
 
