@@ -63,6 +63,31 @@ static void arp_request(ipv4Addr target)
     rtl_transmit((char *) &request, sizeof(request), ARP, broadcastAddr);
 }
 
+// Send an ARP Reply
+static void arp_reply(ipv4Addr target)
+{
+    // Address Type Mapping
+    reply.hardType = num_endian(ETHER);
+    reply.protType = num_endian(IPV4);
+
+    reply.hardLen = sizeof(macAddr);
+    reply.protLen = sizeof(ipv4Addr);
+
+    // Sender Information
+    reply.senderHardAddr = rtl_macAddr;
+    reply.senderProtAddr = ipv4_addr;
+
+    // Target Information
+    reply.targetHardAddr = arp_query(target);
+    reply.targetProtAddr = target;
+
+    // Op-Code
+    reply.op = num_endian(REPLY);
+
+    // Send ARP Request
+    rtl_transmit((char *) &reply, sizeof(reply), ARP, reply.targetHardAddr);
+}
+
 // Initialization
 void arp_init(void)
 {
@@ -107,50 +132,6 @@ void arp_cache(macAddr hardAddr, ipv4Addr protAddr)
     cacheCounter++;
 }
 
-// Handle ARP Request
-static void arp_handleRequest(void)
-{
-    // Address Type Mapping
-    reply.hardType = num_endian(ETHER);
-    reply.protType = num_endian(IPV4);
-
-    reply.hardLen = sizeof(macAddr);
-    reply.protLen = sizeof(ipv4Addr);
-
-    // Sender Information
-    reply.senderHardAddr = rtl_macAddr;
-    reply.senderProtAddr = ipv4_addr;
-
-    // Target Information
-    reply.targetHardAddr = recv.senderHardAddr;
-    reply.targetProtAddr = recv.senderProtAddr;
-
-    // Op-Code
-    reply.op = num_endian(REPLY);
-
-    // Send ARP Request
-    rtl_transmit((char *) &reply, sizeof(reply), ARP, recv.senderHardAddr);
-}
-
-// Handle ARP Reply
-static void arp_handleReply(void)
-{
-    // Find Cache Entry
-    uint8_t cacheIndex = cacheCounter;
-    for (size_t i = 0; i < 256; i++) {
-        if (cache[i].protAddr == recv.senderProtAddr) {
-            cacheIndex = i;
-            break;
-        }
-    }
-
-    // Make a new entry if nothing was found
-    if (cacheIndex == cacheCounter) cacheCounter++;
-
-    // Cache the Hardware Address
-    cache[cacheIndex].hardAddr = recv.senderHardAddr;
-}
-
 // Handle ARP Packet
 void arp_handle(uint16_t recvOffset)
 {
@@ -164,17 +145,9 @@ void arp_handle(uint16_t recvOffset)
     // Break if this packet is not for us
     if (recv.targetProtAddr != ipv4_addr) return;
 
-    // Check Op-Code
-    switch (num_endian(recv.op)) {
-        case REQUEST:
-            arp_handleRequest();
-            break;
+    // Cache Address
+    arp_cache(recv.senderHardAddr, recv.senderProtAddr);
 
-        case REPLY:
-            arp_handleReply();
-            break;
-
-        default:
-            break;
-    }
+    // If this is an ARP Request, send a Reply
+    if (num_endian(recv.op) == REQUEST) arp_reply(recv.senderProtAddr);
 }
