@@ -3,6 +3,14 @@
 **/*.dat
 **/.*.swp
 
+**/*.aux
+**/*.log
+**/*.nav
+**/*.out
+**/*.pdf
+**/*.snm
+**/*.toc
+
 boot/sys
 boot/initrd
 build.iso
