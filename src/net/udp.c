@@ -81,16 +81,4 @@ void udp_handle(ipv4Addr srcAddr)
         ip_checksum((uint16_t *) &recv, length) +
         ip_checksum((uint16_t *) &pseudoHeader, sizeof(pseudoHeader))
     != 0xFFFF) return;
-
-    // Handle by Protocol
-    switch (num_endian(recv.header.dest))
-    {
-        // Port 0
-        case UDP_NONE:
-            break;
-
-        // Check Sockets
-        default:
-            break;
-    }
 }

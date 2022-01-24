@@ -107,7 +107,7 @@ void ipv4_handleActually(void)
 
     // Pass to Protocol
     switch (recv.header.prot) {
-        case ICMP:
+        case IP_ICMP:
             icmp_handle(recv.header.src);
             break;
 

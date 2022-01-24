@@ -26,9 +26,9 @@ extern ipv4Addr ipv4_subMask;
 extern ipv4Addr ipv4_gate;
 
 // Protocols
-enum Protocol {
-    ICMP = 1,
-    UDP = 17,
+enum IPProtocol {
+    IP_ICMP = 1,
+    IP_UDP = 17,
     IP_NONE = 0xFF
 };
 

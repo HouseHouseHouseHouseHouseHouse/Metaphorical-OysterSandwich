@@ -2,6 +2,7 @@
 
 #include "num.h"
 #include "rtl.h"
+#include "ip.h"
 
 // Packet Structure
 typedef struct {
