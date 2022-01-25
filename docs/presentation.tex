@@ -1,6 +1,6 @@
 \documentclass{beamer}
 
-\usetheme{default}
+\usetheme{Berkeley}
 \usecolortheme{default}
 \usefonttheme{default}
 
@@ -26,12 +26,11 @@
         I took on this project because I was already very involved with and interested in low-level programming, and I wanted to learn more specifically about networking.
     \end{frame}
 
-\section{Network Adaptor}
+\section{Hardware}
 
-    \begin{frame}{Network Adaptor}
-        \textbf{Realtek RTL8139}\\
-        \includegraphics[height=125pt]{Realtek_RTL8139C.jpg}\\
-        \rule{0.5\textwidth}{0.5pt}\\
+    \begin{frame}{Network Adaptor - Realtek RTL8139}
+        \includegraphics[height=125pt]{Realtek_RTL8139C.jpg} \\
+        \rule{0.5\textwidth}{0.5pt} \\
         \begin{itemize}
             \item Widely Used on Older Machines
             \item Easier to Program
@@ -39,7 +38,7 @@
         \end{itemize}
     \end{frame}
 
-\section{Medium Access Control}
+\section{Protocols}
 
     \begin{frame}{Medium Access Control (MAC)}
         \begin{itemize}
@@ -47,25 +46,37 @@
         \end{itemize}
     \end{frame}
 
-\section{The Internet and The Internet Protocol}
-
     \begin{frame}{The Internet and The Internet Protocol}
 
     \end{frame}
 
-\section{The Internet Protocol Suite}
-
     \begin{frame}{The Internet Protocol Suite}
+        \begin{block}{Internet Control Message Protocol (ICMP)}
+            Used for Sending Essential Messages (e.g. Unreachable, Timestamp, PING)
+        \end{block}
 
+        \begin{block}{User Datagram Protocol (UDP)}
+            \begin{itemize}
+                \item Connectionless
+                \item Datagram-Oriented
+            \end{itemize}
+        \end{block}
+
+        \begin{block}{Transmission Control Protocol (TCP)}
+            \begin{itemize}
+                \item Connection-Oriented
+                \item Provides a Stream of Data
+            \end{itemize}
+        \end{block}
+
+        UDP and TCP are Transport-Layer Protocols, and Abstract Ports
     \end{frame}
 
-\section{Implementation - Network Adaptor}
+\section{Implementation}
 
     \begin{frame}{Implementation - Network Adaptor}
 
     \end{frame}
-
-\section{Implementation - Network Protocols}
 
     \begin{frame}{Implementation - Network Protocols}
 
