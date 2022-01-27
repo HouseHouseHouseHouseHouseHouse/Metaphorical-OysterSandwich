@@ -1,6 +1,6 @@
 \documentclass{beamer}
 
-\usetheme{default}
+\usetheme{Berkeley}
 \usecolortheme{default}
 \usefonttheme{default}
 
@@ -10,14 +10,10 @@
 
 \begin{document}
 
-\section{Introduction}
+\section{Title}
 
     \begin{frame}
         \titlepage
-    \end{frame}
-
-    \begin{frame}{Contents}
-        \tableofcontents
     \end{frame}
 
 \section{Project}
@@ -32,10 +28,9 @@
 
 \section{Hardware}
 
-    \begin{frame}{Network Adaptor}
-        \textbf{Realtek RTL8139}\\
-        \includegraphics[height=125pt]{Realtek_RTL8139C.jpg}\\
-        \rule{0.5\textwidth}{0.5pt}\\
+    \begin{frame}{Network Adaptor - Realtek RTL8139}
+        \includegraphics[height=125pt]{Realtek_RTL8139C.jpg} \\
+        \rule{0.5\textwidth}{0.5pt} \\
         \begin{itemize}
             \item Widely Used on Older Machines
             \item Easier to Program
@@ -43,7 +38,47 @@
         \end{itemize}
     \end{frame}
 
-    \begin{frame}{Technical Details}
+\section{Protocols}
+
+    \begin{frame}{Medium Access Control (MAC)}
+        \begin{itemize}
+            \item Data-Link-Layer Protocol
+        \end{itemize}
+    \end{frame}
+
+    \begin{frame}{The Internet and The Internet Protocol}
+
+    \end{frame}
+
+    \begin{frame}{The Internet Protocol Suite}
+        \begin{block}{Internet Control Message Protocol (ICMP)}
+            Used for Sending Essential Messages (e.g. Unreachable, Timestamp, PING)
+        \end{block}
+
+        \begin{block}{User Datagram Protocol (UDP)}
+            \begin{itemize}
+                \item Connectionless
+                \item Datagram-Oriented
+            \end{itemize}
+        \end{block}
+
+        \begin{block}{Transmission Control Protocol (TCP)}
+            \begin{itemize}
+                \item Connection-Oriented
+                \item Provides a Stream of Data
+            \end{itemize}
+        \end{block}
+
+        UDP and TCP are Transport-Layer Protocols, and Abstract Ports
+    \end{frame}
+
+\section{Implementation}
+
+    \begin{frame}{Implementation - Network Adaptor}
+
+    \end{frame}
+
+    \begin{frame}{Implementation - Network Protocols}
 
     \end{frame}
 
