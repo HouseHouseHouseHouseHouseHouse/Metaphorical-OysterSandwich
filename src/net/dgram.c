@@ -1,5 +1,7 @@
 #include "dgram.h"
 
+#include "udp.h"
+
 // Registry of Datagram Channels
 static struct {
     dgramChannel desc;
@@ -50,8 +52,8 @@ void dgram_handle(dgramChannel desc)
         if (
             (registry[i].desc.localAddr == desc.localAddr || desc.localAddr == 0) &&
             (registry[i].desc.remoteAddr == desc.remoteAddr || desc.remoteAddr == 0) &&
-            registry[i].desc.localPort == desc.localPort &&
-            registry[i].desc.remotePort == desc.remotePort
+            (registry[i].desc.localPort == desc.localPort || desc.localPort == 0) &&
+            (registry[i].desc.remotePort == desc.remotePort || desc.remotePort == 0)
         ) {
             registryIndex = i;
             break;
@@ -66,4 +68,10 @@ void dgram_handle(dgramChannel desc)
         default:
             break;
     }
+}
+
+// Copy a Datagram
+uint16_t dgram_copy(char *buffer, uint16_t length)
+{
+    return udp_copy(buffer, length);
 }

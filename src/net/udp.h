@@ -16,4 +16,7 @@ int udp_send(ipv4Addr, port, port, char *, uint16_t);
 // Handle a Datagram
 void udp_handle(ipv4Addr);
 
+// Copy Datagram
+uint16_t udp_copy(char *, uint16_t);
+
 #endif

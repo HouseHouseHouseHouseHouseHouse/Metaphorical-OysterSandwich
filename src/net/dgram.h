@@ -29,4 +29,7 @@ int dgram_send(uint16_t, char *, uint16_t);
 // Handle a Datagram
 void dgram_handle(dgramChannel);
 
+// Copy a Datagram
+uint16_t dgram_copy(char *, uint16_t);
+
 #endif

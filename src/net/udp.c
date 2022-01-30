@@ -82,3 +82,21 @@ void udp_handle(ipv4Addr srcAddr)
         ip_checksum((uint16_t *) &pseudoHeader, sizeof(pseudoHeader))
     != 0xFFFF) return;
 }
+
+// Copy Datagram
+uint16_t udp_copy(char *buffer, uint16_t maxLength)
+{
+    // Data Length
+    uint16_t length = num_endian(recv.header.length) - sizeof(recv.header);
+
+    // Impose Maximum
+    if (length > maxLength || length > sizeof(recv)) return 0;
+
+    // Copy Data
+    for (size_t i = 0; i < length; i++) {
+        buffer[i] = recv.data[i];
+    }
+
+    // Return Length
+    return length;
+}
