@@ -2,66 +2,66 @@
 
 #include "udp.h"
 
-// Registry of Datagram Channels
+/*
+    A service can register a port at any time. It can specify the number or choose not to.
+    When registering, a service can provide an association key for its own use.
+    In order to register, the service must provide an address/port for a remote machine.
+    It can specify zero for either of these to indicate all addresses/ports.
+    When a datagram is received, this interface will check if the sender matches the remote
+    machine and pass it to the appropriate service along with the association key.
+    A service can send a datagram by providing the port number an address/port if not specified
+    in the registration.
+*/
+
+// Registry of Datagram Ports
 static struct {
-    dgramChannel desc;
     uint8_t service;
     uint32_t association;
-} registry[256];
-uint8_t registryCounter = 0;
+    dgramDesc remote;
+} registry[65536];
+port registryCounter = 1024;
 
 // Register a Datagram Channel
-uint16_t dgram_register(dgramChannel desc, enum DgramService service, uint32_t association)
+uint16_t dgram_register(port port, enum DgramService service, uint32_t association, dgramDesc remote)
 {
-    // Copy Descriptor
-    registry[registryCounter].desc.localAddr = desc.localAddr;
-    registry[registryCounter].desc.remoteAddr = desc.remoteAddr;
-    registry[registryCounter].desc.localPort = desc.localPort;
-    registry[registryCounter].desc.remotePort = desc.remotePort;
+    // Assign a Port if needed
+    if (port == 0) port = registryCounter++;
+    if (registryCounter == 65536) registryCounter = 1024;
 
-    // Copy Service
-    registry[registryCounter].service = service;
+    // Copy Service & Association
+    registry[port].service = service;
+    registry[port].association = association;
 
-    // Copy Association
-    registry[registryCounter].association = association;
+    // Copy Remote Descriptor
+    registry[port].desc.addr = desc.addr;
+    registry[port].desc.port = desc.port;
 
-    // Return Index and Increment
-    return registryCounter++;
+    // Return Port and Increment
+    return port;
 }
 
 // Send a Datagram
-int dgram_send(uint16_t registryIndex, char *buffer, uint16_t length)
+int dgram_send(port port, dgramDesc dest, char *buffer, uint16_t length)
 {
     // Send Datagram with UDP
     return udp_send(
-        registry[registryIndex].desc.remoteAddr,
-        registry[registryIndex].desc.localPort,
-        registry[registryIndex].desc.remotePort,
+        // Give precedence to specified destination addr/port
+        dest.addr != 0 ? dest.addr : registry[port].remote.addr,
+        port,
+        dest.port != 0 ? dest.port : registry[port].remote.port,
         buffer, length
     );
 }
 
 // Handle a Datagram
-void dgram_handle(dgramChannel desc)
+void dgram_handle(port port, dgramDesc src)
 {
-    // Channel Index
-    uint16_t registryIndex;
-
-    // Find Channel
-    for (size_t i = 0; i < 256; i++) {
-        if (
-            (registry[i].desc.localAddr == desc.localAddr || desc.localAddr == 0) &&
-            (registry[i].desc.remoteAddr == desc.remoteAddr || desc.remoteAddr == 0) &&
-            (registry[i].desc.localPort == desc.localPort || desc.localPort == 0) &&
-            (registry[i].desc.remotePort == desc.remotePort || desc.remotePort == 0)
-        ) {
-            registryIndex = i;
-            break;
-        }
-    }
+    // Does this Datagram pass restriction?
+    if (registry[port].desc.addr != src.addr && registry[port].desc.addr != 0) break;
+    if (registry[port].desc.port != src.port && registry[port].desc.port != 0) break;
 
     // Handle by Service
-    switch(registry[registryIndex].service) {
+    switch (registry[port].service) {
         case DGRAM_TFTP:
             break;
 

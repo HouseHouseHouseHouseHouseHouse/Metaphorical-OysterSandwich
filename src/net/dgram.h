@@ -14,14 +14,14 @@ enum DgramService {
     DGRAM_TFTP = 1
 };
 
-// Datagram Channel Descriptor
+// Datagram Address Descriptor
 typedef struct {
-    ipv4Addr localAddr, remoteAddr;
-    port localPort, remotePort;
-} dgramChannel;
+    ipv4Addr addr;
+    port port;
+} dgramDesc;
 
 // Register a Datagram Channel
-uint16_t dgram_register(dgramChannel, enum DgramService, uint32_t);
+uint16_t dgram_register(dgramDesc, enum DgramService, uint32_t);
 
 // Send a Datagram
 int dgram_send(uint16_t, char *, uint16_t);
