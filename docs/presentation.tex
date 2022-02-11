@@ -1,5 +1,7 @@
 \documentclass{beamer}
 
+\usepackage{smartdiagram}
+
 \usetheme{default}
 \usecolortheme{default}
 \usefonttheme{default}
@@ -19,11 +21,18 @@
 \section{Project}
 
     \begin{frame}{Project}
-        The goal of this project was to implement a \textbf{network driver} and \textbf{network stack} at the \textbf{base level}.
-        This was to be accomplished through writing an \textbf{operating system} for the \textbf{IA-32 Architecture} in the \textbf{C Programming Language}.
-        The system was to be implemented as a \textbf{TFTP Storage Server}.\\
+        \begin{itemize}
+            \item Involved with Low-Level Programming
+            \item Interested in Networking
+        \end{itemize}
         \rule{0.5\textwidth}{0.5pt}\\
-        I took on this project because I was already very involved with and interested in low-level programming, and I wanted to learn more specifically about networking.
+        \begin{itemize}
+            \item Operating System for IA-32
+            \item Written in C
+            \item Network Driver
+            \item Network Stack
+            \item TFTP Storage Server
+        \end{itemize}
     \end{frame}
 
 \section{Hardware}
@@ -32,69 +41,48 @@
         \includegraphics[height=125pt]{Realtek_RTL8139C.jpg} \\
         \rule{0.5\textwidth}{0.5pt} \\
         \begin{itemize}
-            \item Widely Used on Older Machines
-            \item Easier to Program
-            \item Inexpensive
-        \end{itemize}
-    \end{frame}
-
-\section{Protocols}
-
-    \begin{frame}{Medium Access Control (MAC)}
-        \begin{itemize}
-            \item Data-Link-Layer Protocol
-            \item Addresses Packets to a Machine
-        \end{itemize}
-    \end{frame}
-
-    \begin{frame}{The Internet and The Internet Protocol}
-        \begin{itemize}
-            \item Network-Layer Protocol
-            \item Addresses Packets to a Host
-            \item Forwarded through Several Networks of Routers
-        \end{itemize}
-    \end{frame}
-
-    \begin{frame}{The Internet Protocol Suite}
-        \begin{block}{Internet Control Message Protocol (ICMP)}
-            Used for Sending Essential Messages (e.g. Unreachable, Timestamp, PING)
-        \end{block}
-
-        \begin{block}{User Datagram Protocol (UDP)}
+            \item Older Chip (1999)
             \begin{itemize}
-                \item Connectionless
-                \item Datagram-Oriented
+                \item Easier to Program
+                \item Widely Used
+                \item Inexpensive
             \end{itemize}
-        \end{block}
+            \item PCI Card
+        \end{itemize}
+    \end{frame}
 
-        \begin{block}{Transmission Control Protocol (TCP)}
-            \begin{itemize}
-                \item Connection-Oriented
-                \item Provides a Stream of Data
-            \end{itemize}
-        \end{block}
+\section{Standards}
 
-        UDP and TCP are Transport-Layer Protocols, and Abstract Ports
+    \begin{frame}{The OSI Model}
+        \smartdiagramset{
+            description font= \scriptsize,
+            descriptive items y sep=1.15
+        }
+        \smartdiagram[priority descriptive diagram]{
+            {\textbf{Physical} (Ethernet): responsible for encoding data onto the physical link},
+            {\textbf{Data-Link} (MAC, LLC): provides data transfer across a link (local network)},
+            {\textbf{Network} (IPv4): enables communication across multiple data links (wide network)},
+            {\textbf{Transport} (UDP, TCP): provides abstractions for conveying arbitrary data},
+            {\textbf{Session} (TCP): provides a "dialogue" model},
+            {\textbf{Presentation/Application} (TFTP, HTTP): highest-level communication protocol, specific to programs}
+        }
     \end{frame}
 
 \section{Implementation}
 
-    \begin{frame}{Implementation - Network Adaptor}
-
-    \end{frame}
-
-    \begin{frame}{Implementation - Network Protocols}
-
-    \end{frame}
-
-\section{What I Learned}
-
-    \begin{frame}{What I Learned}
-        \begin{block}{Networking}
-            Through this project, I gained a deep understanding of how the Computer Networks and the Internet work at the lowest level.
+    \begin{frame}{Implementation}
+        \smartdiagramset{
+            back arrow disabled=true
+        }
+        \begin{block}{Internet Protocol Handler}
+            \smartdiagram[flow diagram:horizontal]{
+                Copy Packet to Buffer, Validate Destination \& Checksum, Cache HW Address, Call Higher Protocol
+            }
         \end{block}
-        \begin{block}{System Architecture}
-            In addition to what I've already learned about the X86 architecure, this project made me learn more about interrupts and the MMU.
+        \begin{block}{Internet Protocol Send Routine}
+            \smartdiagram[flow diagram:horizontal]{
+                Frame Payload \& Length, Compute Checksum, Query HW Address, Call Driver
+            }
         \end{block}
     \end{frame}
 
