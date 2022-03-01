@@ -22,7 +22,7 @@ LOOP1	:= /dev/loop7
 
 .PHONY: all test debug iso clean test
 
-all: iso clean
+all: boot/sys iso clean
 
 boot/sys: $(OBJS) src/boot.o src/main.o
 	$(CC) -T linker.ld -o boot/sys -nostdlib src/boot.o src/main.o $(OBJS) -lgcc

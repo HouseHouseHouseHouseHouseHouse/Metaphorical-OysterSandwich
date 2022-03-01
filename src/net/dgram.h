@@ -10,8 +10,8 @@
 
 // Datagram Services
 enum DgramService {
-    DGRAM_NONE = 0,
-    DGRAM_TFTP = 1
+    DGRAM_NONE,
+    DGRAM_TFTP
 };
 
 // Datagram Address Descriptor
@@ -20,14 +20,16 @@ typedef struct {
     port port;
 } dgramDesc;
 
-// Register a Datagram Channel
-uint16_t dgram_register(dgramDesc, enum DgramService, uint32_t);
+extern dgramDesc dgram_descAll;
+
+// Register a Port
+uint16_t dgram_register(port, dgramDesc, enum DgramService, uint32_t);
 
 // Send a Datagram
-int dgram_send(uint16_t, char *, uint16_t);
+int dgram_send(port, dgramDesc, char *, uint16_t);
 
 // Handle a Datagram
-void dgram_handle(dgramChannel);
+void dgram_handle(port, dgramDesc);
 
 // Copy a Datagram
 uint16_t dgram_copy(char *, uint16_t);

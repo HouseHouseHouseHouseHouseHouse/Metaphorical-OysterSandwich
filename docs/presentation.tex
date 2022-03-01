@@ -2,9 +2,12 @@
 
 \usepackage{smartdiagram}
 
-\usetheme{default}
+\usetheme{Berkeley}
 \usecolortheme{default}
 \usefonttheme{default}
+
+\setbeamertemplate{footline}[frame number]
+\hyphenpenalty=10000
 
 \title{Low-Level Network Programming and Operating Systems Development}
 \author{Jacob Bates}
@@ -25,13 +28,13 @@
             \item Involved with Low-Level Programming
             \item Interested in Networking
         \end{itemize}
-        \rule{0.5\textwidth}{0.5pt}\\
+        \rule{0.5\textwidth}{0.5pt} \\
         \begin{itemize}
             \item Operating System for IA-32
             \item Written in C
             \item Network Driver
             \item Network Stack
-            \item TFTP Storage Server
+            \item TFTP File Storage Server
         \end{itemize}
     \end{frame}
 
@@ -53,18 +56,18 @@
 
 \section{Standards}
 
-    \begin{frame}{The OSI Model}
+    \begin{frame}{The OSI Model (Open Systems Interconnection)}
         \smartdiagramset{
-            description font= \scriptsize,
-            descriptive items y sep=1.15
+            description font= \tiny,
+            descriptive items y sep=1.1
         }
         \smartdiagram[priority descriptive diagram]{
-            {\textbf{Physical} (Ethernet): responsible for encoding data onto the physical link},
-            {\textbf{Data-Link} (MAC, LLC): provides data transfer across a link (local network)},
-            {\textbf{Network} (IPv4): enables communication across multiple data links (wide network)},
-            {\textbf{Transport} (UDP, TCP): provides abstractions for conveying arbitrary data},
-            {\textbf{Session} (TCP): provides a "dialogue" model},
-            {\textbf{Presentation/Application} (TFTP, HTTP): highest-level communication protocol, specific to programs}
+            {\textbf{1. Physical} (Ethernet): responsible for encoding data onto the physical link},
+            {\textbf{2. Data-Link} (MAC, LLC): provides data transfer across a link (local network)},
+            {\textbf{3. Network} (IPv4): enables communication across multiple data links (wide network)},
+            {\textbf{4. Transport} (UDP, TCP): provides abstractions for conveying arbitrary data},
+            {\textbf{5. Session} (TCP): provides a "dialogue" model},
+            {\textbf{6/7. Presentation/Application} (TFTP): highest-level communication protocol, specific to programs}
         }
     \end{frame}
 
